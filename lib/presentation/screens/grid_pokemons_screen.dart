@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pokeapi/data/model/type_pokemon.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
 import 'package:pokeapi/presentation/widgets/pokemon_widget.dart';
 
@@ -10,21 +8,89 @@ class GridPokemonsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<DataPokemonBloc, DataPokemonState>(
+    Size size = MediaQuery.sizeOf(context);
+    return BlocBuilder<DataPokemonBloc, DataPokemonState>(
       builder: (context, state) {
-        return GridView.builder(
-          padding: EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: MediaQuery.sizeOf(context).height * 0.1),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: 10,
-              crossAxisCount: 3, crossAxisSpacing: 10.0, childAspectRatio: 0.7),
-          itemCount: state.listPokemons.length,
-          itemBuilder: (context, index) {
-            return PokemonWidget(pokemon: state.listPokemons[index]);
-          },
+        return CustomScrollView(
+          slivers: [
+            SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.05,vertical: 10),
+                sliver: const SliverAppBar(
+                    expandedHeight: 60.0,
+                    automaticallyImplyLeading: false,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Text(
+                        "Una app que utiliza la PokéAPI para buscar y ver información detallada de Pokémon, como sus tipos, habilidades y estadísticas, con una interfaz sencilla e intuitiva.",
+                        style: TextStyle(letterSpacing: 1,fontSize: 11),
+                      ),
+                      collapseMode: CollapseMode.parallax,
+                    ))),
+            SliverAppBar(
+              expandedHeight: 70.0, // Altura cuando está expandido
+              floating: true,
+              pinned: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              scrolledUnderElevation: 0,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.only(
+                      top: 10, bottom: 10, left: 10, right: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(30.0)),
+                  child: TextField(
+                    onChanged: (value) {},
+                    decoration: const InputDecoration(
+                      hintText: 'Search Pokémon...',
+                      border: InputBorder.none,
+                      icon: Icon(Icons.search, color: Colors.blueAccent),
+                    ),
+                  ),
+                ),
+                collapseMode: CollapseMode.parallax,
+              ),
+            ),
+            SliverPadding(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.sizeOf(context).height * 0.01,
+                    bottom: MediaQuery.sizeOf(context).height * 0.15,
+                    left: MediaQuery.sizeOf(context).width * 0.05,
+                    right: MediaQuery.sizeOf(context).width * 0.05),
+                sliver: SliverGrid.builder(
+                  addRepaintBoundaries: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10.0,
+                      childAspectRatio: 1),
+                  itemCount: state.listPokemons.length,
+                  itemBuilder: (context, index) {
+                    return PokemonWidget(pokemon: state.listPokemons[index]);
+                  },
+                )),
+          ],
         );
       },
     );
   }
 }
+// Expanded(
+//                 child: GridView.builder(
+//               padding: EdgeInsets.only(
+//                   top: MediaQuery.sizeOf(context).height * 0.01,
+//                   bottom: MediaQuery.sizeOf(context).height * 0.15,
+//                   left: MediaQuery.sizeOf(context).width * 0.05,
+//                   right: MediaQuery.sizeOf(context).width * 0.05),
+//               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//                   mainAxisSpacing: 10,
+//                   crossAxisCount: 2,
+//                   crossAxisSpacing: 10.0,
+//                   childAspectRatio: 1),
+//               itemCount: state.listPokemons.length,
+//               itemBuilder: (context, index) {
+//
+//               },
+//             ))

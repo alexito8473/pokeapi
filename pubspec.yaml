@@ -59,6 +59,7 @@ flutter:
     - assets/splash/
     - assets/pokeball/
     - assets/type/
+    - assets/backgroundPokemon/
   fonts:
     - family: Pokemon_Hollow
       fonts:

@@ -39,6 +39,7 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
             }
            state.listPokemons.add(Pokemon(
                 name: dataAllPokemon["results"][i]["name"],
+                id: i+1,
                 spriteBack: dataOnePokemon["sprites"]["back_default"],
                 spriteFront: dataOnePokemon["sprites"]["front_default"],
                 spriteBackShiny: dataOnePokemon["sprites"]["back_shiny"],

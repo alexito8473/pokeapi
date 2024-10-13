@@ -10,21 +10,30 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late List<Widget> _listWidget;
   late Widget _view;
   late NotchBottomBarController _controller;
+  double positionAnimation = 0;
   int position = 0;
   @override
   void initState() {
     _listWidget = [
       const GridPokemonsScreen(),
-      Container(color: Colors.blue),
-      Container(color: Colors.green),
+      Container(),
+      Container(),
     ];
     _view = _listWidget[position];
     _controller = NotchBottomBarController(index: position);
     super.initState();
+    Future.delayed(
+      const Duration(milliseconds: 400),
+      () {
+        setState(() {
+          positionAnimation = -1;
+        });
+      },
+    );
   }
 
   void _changeView(int value) {
@@ -37,13 +46,40 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
     return PopScope(
         canPop: false,
-        child: HomeScreen(
-          changeView: _changeView,
-          view: _view,
-          currentIndex: position,
-          controller: _controller,
-        ));
+        child: Stack(children: [
+          Positioned.fill(
+              child: HomeScreen(
+            changeView: _changeView,
+            view: _view,
+            currentIndex: position,
+            controller: _controller,
+          )),
+          AnimatedPositioned(
+              duration: const Duration(seconds: 1),
+              bottom: size.height * 0.6 * positionAnimation,
+              left: 0,
+              curve: Curves.easeIn,
+              child: Image.asset(
+                "assets/pokeball/pokeballBottom.png",
+                fit: BoxFit.fill,
+                width: size.width,
+                height: size.height * 0.6,
+              )),
+          AnimatedPositioned(
+            top: size.height * 0.6 * positionAnimation,
+            left: 0,
+            curve: Curves.easeIn,
+            duration: const Duration(seconds: 1),
+            child: Image.asset(
+              "assets/pokeball/pokeballTop.png",
+              fit: BoxFit.fill,
+              width: size.width,
+              height: size.height * 0.5,
+            ),
+          ),
+        ]));
   }
 }

@@ -1,29 +1,90 @@
 import 'dart:ui';
 
 enum TypePokemon {
-  NORMAL(urlImage: "assets/type/normal.png",color: Color.fromRGBO(159, 161, 159, 1)),
-  FIGHTING(urlImage: "assets/type/fighting.png",color: Color.fromRGBO(254,129,0, 1)),
-  FLYING(urlImage: "assets/type/flying.png",color: Color.fromRGBO(128,184,239, 1)),
-  POISON(urlImage: "assets/type/poison.png",color: Color.fromRGBO(144,65,202, 1)),
-  GROUND(urlImage: "assets/type/ground.png",color: Color.fromRGBO(145,80,32, 1)),
-  ROCK(urlImage: "assets/type/rock.png",color: Color.fromRGBO(174,168,129, 1)),
-  BUG(urlImage: "assets/type/bug.png",color: Color.fromRGBO(144,160,25, 1)),
-  GHOST(urlImage: "assets/type/ghost.png",color: Color.fromRGBO(113,65,113, 1)),
-  STEEL(urlImage: "assets/type/steel.png",color: Color.fromRGBO(97,160,184, 1)),
-  FIRE(urlImage: "assets/type/fire.png",color: Color.fromRGBO(230,40,41, 1)),
-  WATER(urlImage: "assets/type/water.png",color: Color.fromRGBO(41,128,239, 1)),
-  GRASS(urlImage: "assets/type/grass.png",color: Color.fromRGBO(62,160,41, 1)),
-  ELECTRIC(urlImage: "assets/type/electric.png",color: Color.fromRGBO(250,192,0, 1)),
-  PSYCHIC(urlImage: "assets/type/pyshic.png",color: Color.fromRGBO(239,64,120, 1)),
-  ICE(urlImage: "assets/type/ice.png",color: Color.fromRGBO(62,216,254, 1)),
-  DRAGON(urlImage: "assets/type/dragon.png",color: Color.fromRGBO(80,97,224, 1)),
-  FAIRY(urlImage: "assets/type/fairy.png",color: Color.fromRGBO(238,113,239, 1)),
-  STELLAR(urlImage: "assets/type/stellar.png",color: Color.fromRGBO(254,255,254, 1)),
-  SHADOW(urlImage: "assets/type/dark.png",color: Color.fromRGBO(80,64,62, 1));
+  NORMAL(
+      urlImageType: "assets/type/normal.png",
+      urlImageBackground: "assets/backgroundPokemon/normal.jpg",
+      color: Color.fromRGBO(159, 161, 159, 1)),
+  FIGHTING(
+      urlImageType: "assets/type/fighting.png",
+      urlImageBackground: "assets/backgroundPokemon/fighting.jpg",
+      color: Color.fromRGBO(254, 129, 0, 1)),
+  FLYING(
+      urlImageType: "assets/type/flying.png",
+      urlImageBackground: "assets/backgroundPokemon/flying.jpg",
+      color: Color.fromRGBO(128, 184, 239, 1)),
+  POISON(
+      urlImageType: "assets/type/poison.png",
+      urlImageBackground: "assets/backgroundPokemon/poison.jpg",
+      color: Color.fromRGBO(144, 65, 202, 1)),
+  GROUND(
+      urlImageType: "assets/type/ground.png",
+      urlImageBackground: "assets/backgroundPokemon/ground.jpg",
+      color: Color.fromRGBO(145, 80, 32, 1)),
+  ROCK(
+      urlImageType: "assets/type/rock.png",
+      urlImageBackground: "assets/backgroundPokemon/rock.jpg",
+      color: Color.fromRGBO(174, 168, 129, 1)),
+  BUG(
+      urlImageType: "assets/type/bug.png",
+      urlImageBackground: "assets/backgroundPokemon/bug.jpg",
+      color: Color.fromRGBO(144, 160, 25, 1)),
+  GHOST(
+      urlImageType: "assets/type/ghost.png",
+      urlImageBackground: "assets/backgroundPokemon/ghost.jpg",
+      color: Color.fromRGBO(113, 65, 113, 1)),
+  STEEL(
+      urlImageType: "assets/type/steel.png",
+      urlImageBackground: "assets/backgroundPokemon/steel.jpg",
+      color: Color.fromRGBO(97, 160, 184, 1)),
+  FIRE(
+      urlImageType: "assets/type/fire.png",
+      urlImageBackground: "assets/backgroundPokemon/fire.jpg",
+      color: Color.fromRGBO(230, 40, 41, 1)),
+  WATER(
+      urlImageType: "assets/type/water.png",
+      urlImageBackground: "assets/backgroundPokemon/water.jpg",
+      color: Color.fromRGBO(41, 128, 239, 1)),
+  GRASS(
+      urlImageType: "assets/type/grass.png",
+      urlImageBackground: "assets/backgroundPokemon/grass.jpg",
+      color: Color.fromRGBO(62, 160, 41, 1)),
+  ELECTRIC(
+      urlImageType: "assets/type/electric.png",
+      urlImageBackground: "assets/backgroundPokemon/electric.jpg",
+      color: Color.fromRGBO(250, 192, 0, 1)),
+  PSYCHIC(
+      urlImageType: "assets/type/pyshic.png",
+      urlImageBackground: "assets/backgroundPokemon/pyshic.jpg",
+      color: Color.fromRGBO(239, 64, 120, 1)),
+  ICE(
+      urlImageType: "assets/type/ice.png",
+      urlImageBackground: "assets/backgroundPokemon/ice.jpg",
+      color: Color.fromRGBO(62, 216, 254, 1)),
+  DRAGON(
+      urlImageType: "assets/type/dragon.png",
+      urlImageBackground: "assets/backgroundPokemon/dragon.jpg",
+      color: Color.fromRGBO(80, 97, 224, 1)),
+  FAIRY(
+      urlImageType: "assets/type/fairy.png",
+      urlImageBackground: "assets/backgroundPokemon/fairy.jpg",
+      color: Color.fromRGBO(238, 113, 239, 1)),
+  STELLAR(
+      urlImageType: "assets/type/stellar.png",
+      urlImageBackground: "assets/backgroundPokemon/stellar.jpg",
+      color: Color.fromRGBO(254, 255, 254, 1)),
+  SHADOW(
+      urlImageType: "assets/type/dark.png",
+      urlImageBackground: "assets/backgroundPokemon/shadow.jpg",
+      color: Color.fromRGBO(80, 64, 62, 1));
 
-  final String urlImage;
+  final String urlImageType;
+  final String urlImageBackground;
   final Color color;
-  const TypePokemon({required this.urlImage, required this.color});
+  const TypePokemon(
+      {required this.urlImageType,
+      required this.color,
+      required this.urlImageBackground});
   String getTitle() {
     switch (this) {
       case TypePokemon.NORMAL:
