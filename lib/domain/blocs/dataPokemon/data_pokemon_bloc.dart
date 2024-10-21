@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:pokeapi/data/model/pokemon.dart';
 import 'package:pokeapi/data/model/type_pokemon.dart';
 import 'package:pokeapi/domain/Constants.dart';
-import 'package:pokeapi/domain/repositories/obtain_data_pokemons_repository.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

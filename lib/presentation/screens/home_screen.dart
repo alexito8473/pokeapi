@@ -1,27 +1,32 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   final Function changeView;
   final Widget view;
   final int currentIndex;
   final NotchBottomBarController controller;
-
+  final ZoomDrawerController drawerController;
   const HomeScreen(
       {super.key,
       required this.changeView,
       required this.view,
       required this.currentIndex,
-      required this.controller});
+      required this.controller,
+      required this.drawerController});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            leading: IconButton(
+                onPressed: () => drawerController.toggle?.call(),
+                icon: const Icon(Icons.menu)),
             actions: [
               IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
             ],
-            automaticallyImplyLeading: false,
             toolbarHeight: 70,
             title: const Text("Poke Api",
                 style: TextStyle(fontSize: 26, letterSpacing: 3))),

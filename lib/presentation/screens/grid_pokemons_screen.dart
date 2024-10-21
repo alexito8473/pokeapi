@@ -77,20 +77,3 @@ class GridPokemonsScreen extends StatelessWidget {
     );
   }
 }
-// Expanded(
-//                 child: GridView.builder(
-//               padding: EdgeInsets.only(
-//                   top: MediaQuery.sizeOf(context).height * 0.01,
-//                   bottom: MediaQuery.sizeOf(context).height * 0.15,
-//                   left: MediaQuery.sizeOf(context).width * 0.05,
-//                   right: MediaQuery.sizeOf(context).width * 0.05),
-//               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//                   mainAxisSpacing: 10,
-//                   crossAxisCount: 2,
-//                   crossAxisSpacing: 10.0,
-//                   childAspectRatio: 1),
-//               itemCount: state.listPokemons.length,
-//               itemBuilder: (context, index) {
-//
-//               },
-//             ))

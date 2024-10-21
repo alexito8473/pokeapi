@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
 
 import 'package:pokeapi/presentation/route/route.dart';
@@ -15,7 +16,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => DataPokemonBloc())],
+          BlocProvider(create: (context) => DataPokemonBloc()),
+          BlocProvider(create: (context) => DataItemBloc()),
+        ],
         child: MaterialApp.router(
           title: 'Poke api',
           theme: ThemeData(

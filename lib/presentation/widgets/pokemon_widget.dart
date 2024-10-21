@@ -41,7 +41,7 @@ class PokemonWidget extends StatelessWidget {
                   fit: BoxFit.cover,
                     alignment: Alignment.bottomLeft,
                     filterQuality: FilterQuality.none,
-                    colorFilter: const ColorFilter.mode(Colors.black45, BlendMode.darken),
+                    colorFilter: const ColorFilter.mode(Colors.black38, BlendMode.darken),
                     image: AssetImage(pokemon.listType![0].urlImageBackground)),
                 boxShadow: const [
                   BoxShadow(

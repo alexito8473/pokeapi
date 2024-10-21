@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
 
 class SplashScreensPage extends StatefulWidget {
@@ -14,11 +15,12 @@ class SplashScreensPage extends StatefulWidget {
 }
 
 class _SplashScreensPageState extends State<SplashScreensPage>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   int positionAnimation=-1;
   @override
   void initState() {
     context.read<DataPokemonBloc>().add(DataPokemonEvent());
+    context.read<DataItemBloc>().add(DataItemEvent());
     super.initState();
   }
 
@@ -30,7 +32,7 @@ class _SplashScreensPageState extends State<SplashScreensPage>
     Size size = MediaQuery.sizeOf(context);
     return BlocListener<DataPokemonBloc, DataPokemonState>(
         listener: (context, state) {
-          if (state.listPokemons.length > 50) {
+          if (state.listPokemons.length > 70) {
             setState(() {
               positionAnimation=0;
             });
