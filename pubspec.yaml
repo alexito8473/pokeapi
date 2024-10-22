@@ -43,7 +43,8 @@ dependencies:
   animated_notch_bottom_bar: ^1.0.3
   cached_network_image: ^3.4.1
   icons_launcher: ^3.0.0
-  flutter_zoom_drawer: ^3.2.0
+  flutter_flip_card: ^0.0.6
+  connectivity_plus: ^6.1.0
 icons_launcher:
   image_path: "assets/pokeball/pokeballLogo.jpg"
   platforms:
