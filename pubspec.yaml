@@ -45,6 +45,7 @@ dependencies:
   icons_launcher: ^3.0.0
   flutter_flip_card: ^0.0.6
   connectivity_plus: ^6.1.0
+  awesome_snackbar_content: ^0.1.4
 icons_launcher:
   image_path: "assets/pokeball/pokeballLogo.jpg"
   platforms:

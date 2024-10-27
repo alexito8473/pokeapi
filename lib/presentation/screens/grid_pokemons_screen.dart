@@ -84,13 +84,11 @@ class GridPokemonsScreen extends StatelessWidget {
                   child: Container(
                 color: Colors.black.withOpacity(0.6),
                 child: Center(
-                  child: Image.asset(
-                    "assets/pokeball/pokeballLoad.gif",
-                    width: size.width * .3,
-                    height: size.height * 0.3,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.high,
-                  ),
+                  child: Image.asset("assets/pokeball/pokeballLoad.gif",
+                      width: size.width * .3,
+                      height: size.height * 0.3,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high),
                 ),
               ))
           ],

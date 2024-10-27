@@ -1,9 +1,40 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_flip_card/flipcard/gesture_flip_card.dart';
 import 'package:flutter_flip_card/modal/flip_side.dart';
 import 'package:pokeapi/data/model/item.dart';
+import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
+import 'package:pokeapi/domain/cubit/connectivity/connectivity_cubit.dart';
+import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
+import 'package:pokeapi/main.dart';
+
+class CardItemWidget extends StatelessWidget {
+  final ItemAttribute itemAttribute;
+  final bool isActive;
+  const CardItemWidget(
+      {super.key, required this.itemAttribute, required this.isActive});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context
+            .read<FilterItemsCubit>()
+            .changeItemAttribute(itemAttribute: itemAttribute);
+
+      },
+      child: Container(
+        width: 100,
+        height: 50,
+        margin: EdgeInsets.all(10),
+        color: isActive ? Colors.yellow : Colors.black,
+        child: Text(itemAttribute.name),
+      ),
+    );
+  }
+}
 
 class ItemWidget extends StatefulWidget {
   final Item item;

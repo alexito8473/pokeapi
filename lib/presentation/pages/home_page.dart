@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
     _controller = NotchBottomBarController(index: position);
     super.initState();
     Future.delayed(
-      const Duration(milliseconds: 400),
+      const Duration(milliseconds: 600),
       () {
         setState(() {
           positionAnimation = -1;
@@ -72,9 +72,8 @@ class _HomePageState extends State<HomePage> {
               curve: Curves.easeIn,
               duration: const Duration(seconds: 1),
               child: Image.asset("assets/pokeball/pokeballTop.png",
-                  fit: BoxFit.fill,
-                  width: size.width,
-                  height: size.height * 0.5))
+                  fit: BoxFit.contain,
+                  width: size.width))
         ]));
   }
 }

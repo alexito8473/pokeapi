@@ -2,11 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pokeapi/data/model/pokemon.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
-import 'package:pokeapi/presentation/pages/splash_screens_page.dart';
-import 'package:pokeapi/presentation/screens/pokemon_screen.dart';
 
 class PokemonCardWidget extends StatelessWidget {
   final Pokemon pokemon;

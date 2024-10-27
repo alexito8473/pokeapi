@@ -7,7 +7,7 @@ class DataPokemonEvent {
 
 class DataPokemonResetValueEvent extends DataPokemonEvent {
 
-  const DataPokemonResetValueEvent({required super.haveWifi});
+  const DataPokemonResetValueEvent({super.haveWifi=true});
 }
 
 class DataAllPokemonEvent extends DataPokemonEvent {

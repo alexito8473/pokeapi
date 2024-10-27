@@ -135,19 +135,16 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
       }
     }, transformer: concurrent());
     on<DataAllPokemonEvent>((event, emit) async {
+      if (state.listPokemons.length == maxPokemonObtain) return;
       dynamic dataAllPokemon;
       dynamic dataOnePokemon;
       Response responseDataOnePokemon;
       List<TypePokemon> listTypePokemon;
       TypePokemon? typePokemon;
-      if (state.listPokemons.length == maxPokemonObtain) return;
       if (event.haveWifi) {
-        String uri =
-            "${Constants.urlObtainBasicDataAllPokemon}?limit=$maxPokemonObtain";
-        if (state.listPokemons.isNotEmpty) {
-          uri =
-              "${Constants.urlObtainBasicDataAllPokemon}?offset=${state.listPokemons.length}&limit=${maxPokemonObtain - state.listPokemons.length}";
-        }
+        String uri = state.listPokemons.isNotEmpty
+            ? "${Constants.urlObtainBasicDataAllPokemon}?offset=${state.listPokemons.length}&limit=${maxPokemonObtain - state.listPokemons.length}"
+            : "${Constants.urlObtainBasicDataAllPokemon}?limit=$maxPokemonObtain";
         try {
           Response responseDataAllPokemon = await http.get(Uri.parse(uri));
           if (responseDataAllPokemon.statusCode == 200) {
@@ -158,7 +155,6 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
               if (responseDataOnePokemon.statusCode == 200) {
                 listTypePokemon = [];
                 dataOnePokemon = jsonDecode(responseDataOnePokemon.body);
-
                 for (int j = 0; j < dataOnePokemon["types"].length; j++) {
                   typePokemon = TypePokemon.obtainType(
                       dataOnePokemon["types"][j]["type"]["name"]);

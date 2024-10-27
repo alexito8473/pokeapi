@@ -3,8 +3,11 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pokeapi/data/model/item.dart';
+import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
 import 'package:pokeapi/domain/cubit/connectivity/connectivity_cubit.dart';
+import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
 
 class SplashScreensPage extends StatefulWidget {
   const SplashScreensPage({super.key});
@@ -14,12 +17,11 @@ class SplashScreensPage extends StatefulWidget {
 }
 
 class _SplashScreensPageState extends State<SplashScreensPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   int positionAnimation = -1;
   @override
   void initState() {
     context.read<ConnectivityCubit>().listenConnectivity();
-    //context.read<DataItemBloc>().add(DataItemEvent());
     super.initState();
   }
 
@@ -31,11 +33,13 @@ class _SplashScreensPageState extends State<SplashScreensPage>
   Widget build(BuildContext context) {
     bool haveWifi = context.watch<ConnectivityCubit>().state.haveWifi;
     Size size = MediaQuery.sizeOf(context);
+    ItemAttribute attribute =
+        context.watch<FilterItemsCubit>().state.itemAttribute;
     return MultiBlocListener(
         listeners: [
           BlocListener<DataPokemonBloc, DataPokemonState>(
             listener: (context, state) {
-              if (state.listPokemons.length > 10) {
+              if (state.listPokemons.length > 50) {
                 setState(() => positionAnimation = 0);
               }
             },
@@ -45,8 +49,16 @@ class _SplashScreensPageState extends State<SplashScreensPage>
               context
                   .read<DataPokemonBloc>()
                   .add(DataAllPokemonEvent(haveWifi: state.haveWifi));
+              context.read<DataItemBloc>().add(DataItemEvent(
+                  haveWifi: state.haveWifi, itemAttribute: attribute));
             },
-          )
+          ),
+          BlocListener<FilterItemsCubit, FilterItemsState>(
+            listener: (context, state) {
+              context.read<DataItemBloc>().add(DataItemEvent(
+                  haveWifi: haveWifi, itemAttribute: state.itemAttribute));
+            },
+          ),
         ],
         child: Scaffold(
             backgroundColor: Colors.grey[100],
@@ -74,6 +86,15 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                                   child: Image.asset(
                                       "assets/splash/loading.gif",
                                       width: size.width * .6)),
+                              Container(
+                                color: Colors.grey,
+                                child: Text(context
+                                    .watch<DataPokemonBloc>()
+                                    .state
+                                    .listPokemons
+                                    .length
+                                    .toString()),
+                              ),
                               Padding(
                                   padding: EdgeInsets.only(
                                       top: MediaQuery.sizeOf(context).height *
@@ -135,16 +156,11 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                       height: size.height * 0.6,
                     )),
                 AnimatedPositioned(
-                  top: size.height * 0.6 * positionAnimation,
-                  left: 0,
-                  duration: const Duration(seconds: 1),
-                  child: Image.asset(
-                    "assets/pokeball/pokeballTop.png",
-                    fit: BoxFit.fill,
-                    width: size.width,
-                    height: size.height * 0.5,
-                  ),
-                ),
+                    top: size.height * 0.6 * positionAnimation,
+                    left: 0,
+                    duration: const Duration(seconds: 1),
+                    child: Image.asset("assets/pokeball/pokeballTop.png",
+                        fit: BoxFit.contain, width: size.width))
               ],
             )));
   }
