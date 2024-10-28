@@ -1,10 +1,10 @@
-
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
 import 'package:pokeapi/domain/cubit/connectivity/connectivity_cubit.dart';
+import 'package:pokeapi/domain/cubit/expandFilters/expand_filter_cubit.dart';
 import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
 
 import 'package:pokeapi/presentation/route/route.dart';
@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => DataItemBloc()),
           BlocProvider(create: (context) => ConnectivityCubit()),
           BlocProvider(create: (context) => FilterItemsCubit()),
+          BlocProvider(create: (context) => ExpandFilterCubit())
         ],
         child: MaterialApp.router(
           title: 'Poke api',

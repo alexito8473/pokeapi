@@ -3,101 +3,82 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokeapi/data/model/item.dart';
 import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
+import 'package:pokeapi/domain/cubit/connectivity/connectivity_cubit.dart';
+import 'package:pokeapi/domain/cubit/expandFilters/expand_filter_cubit.dart';
 import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
 import 'package:pokeapi/presentation/widgets/item_widget.dart';
 
-class GridItemsScreen extends StatelessWidget {
+class GridItemsScreen extends StatefulWidget {
   const GridItemsScreen({super.key});
 
   @override
+  State<GridItemsScreen> createState() => _GridItemsScreenState();
+}
+
+class _GridItemsScreenState extends State<GridItemsScreen> {
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
+    bool openFilter = context.watch<ExpandFilterCubit>().state.isExpandFilter;
     return BlocBuilder<DataItemBloc, DataItemState>(builder: (context, state) {
-      return DefaultTabController(
-          length: ItemAttribute.values.length,
-          child: Column(
-            children: [
-              SizedBox(
-                height: size.height * .1,
-                child: SingleChildScrollView(
-                  child: TabBar(
-                      onTap: (value) {
-                        context.read<FilterItemsCubit>().changeItemAttribute(
-                            itemAttribute: ItemAttribute.values[value]);
-                      },
-                      tabs: List.generate(
-                        ItemAttribute.values.length,
-                        (index) {
-                          return Tab(
-                            text: ItemAttribute.values[index].name,
-                            icon: Icon(Icons.cloud_outlined),
-                          );
-                        },
-                      )),
-                ),
-              ),
-              Expanded(
-                  child: TabBarView(
-                children: List.generate(
-                  ItemAttribute.values.length,
-                  (index) {
-                    return CustomScrollView(
-                      slivers: [
-                        SliverGrid.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          itemCount: state
-                              .getSpecificListItem(ItemAttribute.values[index])
-                              .length,
-                          itemBuilder: (context, index2) {
-                            return ItemWidget(
-                                item: state.getSpecificListItem(
-                                    ItemAttribute.values[index])[index2]);
-                          },
-                        )
-                      ],
-                    );
-                  },
-                ),
-              ))
-            ],
-          ));
+      List<Item>? listItems = context.read<DataItemBloc>().getItems(
+          clave: context.read<FilterItemsCubit>().state.listItemCategory.name);
+      return Column(children: [
+        AnimatedContainer(
+            duration: const Duration(milliseconds: 500),
+            height: openFilter ? size.height * 0.75 : size.height * .1,
+            child: SingleChildScrollView(
+                scrollDirection: openFilter ? Axis.vertical : Axis.horizontal,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                    child: Wrap(
+                        children: List.generate(ListItemCategory.values.length,
+                            (index) {
+                      return CardItemWidget(
+                          itemCategory: ListItemCategory.values[index],
+                          isActive: ListItemCategory.values[index] ==
+                              context
+                                  .watch<FilterItemsCubit>()
+                                  .state
+                                  .listItemCategory,
+                          function: () {
+                            context
+                                .read<FilterItemsCubit>()
+                                .changeItemAttribute(
+                                    listItemCategory:
+                                        ListItemCategory.values[index]);
+                            context.read<DataItemBloc>().add(DataItemEvent(
+                                haveWifi: true,
+                                itemCategory: context
+                                    .read<FilterItemsCubit>()
+                                    .state
+                                    .listItemCategory));
+                          });
+                    }))))),
+        Expanded(
+            child: CustomScrollView(slivers: [
+          SliverPadding(
+              padding: EdgeInsets.only(
+                  bottom: size.height * 0.15,
+                  left: size.width * 0.05,
+                  right: size.width * 0.05),
+              sliver: listItems == null
+                  ? const SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : SliverGrid.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10.0,
+                              childAspectRatio: 1),
+                      itemCount: listItems.length,
+                      itemBuilder: (context, index) {
+                        return ItemWidget(item: listItems[index]);
+                      }))
+        ]))
+      ]);
     });
   }
 }
-//        child: Column(
-//           children: [
-//           SizedBox(
-//           height: 200,
-//           child: CustomScrollView(scrollDirection: Axis.horizontal, slivers: [
-//             SliverPadding(
-//                 padding: EdgeInsets.only(
-//                     top: size.height * 0.01,
-//                     bottom: size.height * 0.15,
-//                     left: size.width * 0.05,
-//                     right: size.width * 0.05),
-//                 sliver: SliverList.builder(
-//                     itemCount: ItemAttribute.values.length,
-//                     itemBuilder: (context, index) => CardItemWidget(
-//                         itemAttribute: ItemAttribute.values[index],
-//                         isActive: ItemAttribute.values[index] ==
-//                             state.currentAttribute)))
-//           ]),
-//         ),
-//           Expanded(
-//               child:Tap SingleChildScrollView(
-//           child: Column(
-//           children:  List.generate(
-//               context.read<DataItemBloc>().currentListItem().length,
-//               (index) {
-//             print(state.listItemsCountable);
-//             return ItemWidget(
-//                 item:
-//                 context.read<DataItemBloc>().currentListItem()[index]);
-//           }),
-//       ),
-//       ) ,
-//       ),
-//       ],
-//       ),

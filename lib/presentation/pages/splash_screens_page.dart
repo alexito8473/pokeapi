@@ -33,8 +33,8 @@ class _SplashScreensPageState extends State<SplashScreensPage>
   Widget build(BuildContext context) {
     bool haveWifi = context.watch<ConnectivityCubit>().state.haveWifi;
     Size size = MediaQuery.sizeOf(context);
-    ItemAttribute attribute =
-        context.watch<FilterItemsCubit>().state.itemAttribute;
+    ListItemCategory currentCategory =
+        context.watch<FilterItemsCubit>().state.listItemCategory;
     return MultiBlocListener(
         listeners: [
           BlocListener<DataPokemonBloc, DataPokemonState>(
@@ -45,20 +45,13 @@ class _SplashScreensPageState extends State<SplashScreensPage>
             },
           ),
           BlocListener<ConnectivityCubit, ConnectivityState>(
-            listener: (context, state) {
-              context
-                  .read<DataPokemonBloc>()
-                  .add(DataAllPokemonEvent(haveWifi: state.haveWifi));
-              context.read<DataItemBloc>().add(DataItemEvent(
-                  haveWifi: state.haveWifi, itemAttribute: attribute));
-            },
-          ),
-          BlocListener<FilterItemsCubit, FilterItemsState>(
-            listener: (context, state) {
-              context.read<DataItemBloc>().add(DataItemEvent(
-                  haveWifi: haveWifi, itemAttribute: state.itemAttribute));
-            },
-          ),
+              listener: (context, state) {
+            context
+                .read<DataPokemonBloc>()
+                .add(DataAllPokemonEvent(haveWifi: state.haveWifi));
+            context.read<DataItemBloc>().add(DataItemEvent(
+                haveWifi: state.haveWifi, itemCategory: currentCategory));
+          })
         ],
         child: Scaffold(
             backgroundColor: Colors.grey[100],

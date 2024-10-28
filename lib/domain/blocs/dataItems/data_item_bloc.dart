@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
@@ -13,125 +14,83 @@ part 'data_item_state.dart';
 class DataItemBloc extends Bloc<DataItemEvent, DataItemState> {
   DataItemBloc() : super(DataItemState.init()) {
     on<DataItemEvent>((event, emit) async {
-      List<Item> listItem = state.getSpecificListItem(event.itemAttribute);
-      if (event.itemAttribute.maxCount == listItem.length) return;
-      dynamic dataAllPokemon;
+      dynamic dataOnePocket;
       dynamic dataOneItem;
-      Response responseDataOneItem;
-      Response responseDataAllPokemon;
+      Response responseOneCategory;
+      Response responseOneItem;
+      int initIndex = 0;
+      bool completeListItem = false;
+      List<Item> listItems = List.empty(growable: true);
       if (event.haveWifi) {
         try {
-          responseDataAllPokemon = await http.get(Uri.parse(
-              "${Constants.urlObtainBasicDataAllItems}/${event.itemAttribute.id}"));
-        print("event${event.itemAttribute.name}");
-          if (responseDataAllPokemon.statusCode == 200) {
-            dataAllPokemon = jsonDecode(responseDataAllPokemon.body);
-            print(
-                "${event.itemAttribute.name} tamaño: ${dataAllPokemon["items"].length}");
-            for (int i = 0; i < dataAllPokemon["items"].length; i++) {
-              responseDataOneItem =
-                  await http.get(Uri.parse(dataAllPokemon["items"][i]["url"]));
-              if (responseDataOneItem.statusCode == 200) {
-                dataOneItem = jsonDecode(responseDataOneItem.body);
-                try {
-                  listItem.add(Item(
-                      name: dataAllPokemon["items"][i]["name"],
+          responseOneCategory = await http.get(Uri.parse(
+              "${Constants.urlObtainBasicDataAllItems}/${event.itemCategory.id}"));
+          if (responseOneCategory.statusCode == 200) {
+            dataOnePocket = jsonDecode(responseOneCategory.body);
+            if (state.mapCategory[event.itemCategory.name] != null) {
+              if (state.mapCategory[event.itemCategory.name]!.length <
+                  dataOnePocket["items"].length) {
+                initIndex =
+                    state.mapCategory[event.itemCategory.name]!.length - 1;
+              } else if (state.mapCategory[event.itemCategory.name]!.length >=
+                  dataOnePocket["items"].length) {
+                completeListItem = true;
+              }
+              listItems.addAll(state.mapCategory[event.itemCategory.name]!);
+            }
+            if (!completeListItem) {
+              for (int i = initIndex; i < dataOnePocket["items"].length; i++) {
+                responseOneItem =
+                    await http.get(Uri.parse(dataOnePocket["items"][i]["url"]));
+
+                if (responseOneItem.statusCode == 200) {
+                  dataOneItem = jsonDecode(responseOneItem.body);
+                  listItems.add(Item(
+                      name: event.itemCategory == ListItemCategory.Z_CRYSTALS
+                          ? dataOnePocket["items"][i]["name"]
+                              .toString()
+                              .replaceAll("-", " ")
+                              .replaceFirst("held", "")
+                              .trim()
+                          : dataOnePocket["items"][i]["name"],
                       cost: dataOneItem["cost"],
-                      sprite: dataOneItem["sprites"]["default"],
+                      sprite: dataOneItem["sprites"]["default"] ??
+                          "assets/item/itemNull.png",
                       descriptionEn: dataOneItem["flavor_text_entries"]
-                              .where(
-                                (element) =>
-                                    element["language"]["name"] == "en",
-                              )
-                              .toList()
-                              .reversed
-                              .toList()[0]["text"] ??
-                          ""));
-                } catch (e) {
-                  print("Position=${i} Error: " + "\n ${e}");
+                          .firstWhere((element) =>
+                              element["language"]["name"] == "en")["text"]));
+                  addOrUpdate(
+                      clave: event.itemCategory.name,
+                      currentListItems: listItems,
+                      emit: emit);
                 }
-                emit(state.copyWith(
-                    listItemsCountable:
-                        ItemAttribute.COUNTABLE == event.itemAttribute
-                            ? listItem
-                            : state.listItemsCountable,
-                    listItemsConsumable:
-                        ItemAttribute.CONSUMABLE == event.itemAttribute
-                            ? listItem
-                            : state.listItemsConsumable,
-                    listItemsUsableOverWorld:
-                        ItemAttribute.USABLE_OVERWORLD == event.itemAttribute
-                            ? listItem
-                            : state.listItemsUsableOverWorld,
-                    listItemsHoldable: ItemAttribute.HOLDABLE == event.itemAttribute
-                        ? listItem
-                        : state.listItemsHoldable,
-                    listItemsHoldableActive:
-                        ItemAttribute.HOLDABLE_ACTIVE == event.itemAttribute
-                            ? listItem
-                            : state.listItemsHoldableActive,
-                    listItemsUnderGround:
-                        ItemAttribute.UNDERGROUND == event.itemAttribute
-                            ? listItem
-                            : state.listItemsUnderGround,
-                    listItemsUsableInBattle:
-                        ItemAttribute.USABLE_IN_BATTLE == event.itemAttribute
-                            ? listItem
-                            : state.listItemsUsableInBattle,
-                    currentAttribute: event.itemAttribute));
               }
             }
           }
+          addOrUpdate(
+              clave: event.itemCategory.name,
+              currentListItems: listItems,
+              emit: emit);
         } catch (e) {
-          print("Error" + e.toString());
+          emit(state.copyWith(
+              mapCategory: state.mapCategory, isErrorObtainData: true));
         }
       } else {
         emit(state.copyWith(
-            listItemsCountable: ItemAttribute.COUNTABLE == event.itemAttribute
-                ? listItem
-                : state.listItemsCountable,
-            listItemsConsumable: ItemAttribute.CONSUMABLE == event.itemAttribute
-                ? listItem
-                : state.listItemsConsumable,
-            listItemsUsableOverWorld:
-                ItemAttribute.USABLE_OVERWORLD == event.itemAttribute
-                    ? listItem
-                    : state.listItemsUsableOverWorld,
-            listItemsHoldable: ItemAttribute.HOLDABLE == event.itemAttribute
-                ? listItem
-                : state.listItemsHoldable,
-            listItemsHoldableActive:
-                ItemAttribute.HOLDABLE_ACTIVE == event.itemAttribute
-                    ? listItem
-                    : state.listItemsHoldableActive,
-            listItemsUnderGround:
-                ItemAttribute.UNDERGROUND == event.itemAttribute
-                    ? listItem
-                    : state.listItemsUnderGround,
-            listItemsUsableInBattle:
-                ItemAttribute.USABLE_IN_BATTLE == event.itemAttribute
-                    ? listItem
-                    : state.listItemsUsableInBattle,
-            currentAttribute: event.itemAttribute));
+            mapCategory: state.mapCategory, isErrorObtainData: true));
       }
     }, transformer: concurrent());
   }
-  List<Item> currentListItem() {
-    switch (state.currentAttribute) {
-      case ItemAttribute.COUNTABLE:
-        return state.listItemsCountable;
-      case ItemAttribute.CONSUMABLE:
-        return state.listItemsConsumable;
-      case ItemAttribute.USABLE_OVERWORLD:
-        return state.listItemsUsableOverWorld;
-      case ItemAttribute.USABLE_IN_BATTLE:
-        return state.listItemsUsableInBattle;
-      case ItemAttribute.HOLDABLE:
-        return state.listItemsHoldable;
-      case ItemAttribute.HOLDABLE_ACTIVE:
-        return state.listItemsHoldableActive;
-      case ItemAttribute.UNDERGROUND:
-        return state.listItemsUnderGround;
-    }
+  List<Item>? getItems({required String clave}) {
+    return state.mapCategory[clave];
+  }
+
+  void addOrUpdate(
+      {required String clave,
+      required List<Item> currentListItems,
+      required Emitter<DataItemState> emit}) {
+    state.mapCategory[clave] = currentListItems;
+    emit(state.copyWith(
+        mapCategory: state.mapCategory, isErrorObtainData: false));
   }
 }

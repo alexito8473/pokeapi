@@ -1,50 +1,50 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_flip_card/flipcard/gesture_flip_card.dart';
 import 'package:flutter_flip_card/modal/flip_side.dart';
 import 'package:pokeapi/data/model/item.dart';
-import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
-import 'package:pokeapi/domain/cubit/connectivity/connectivity_cubit.dart';
-import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
-import 'package:pokeapi/main.dart';
 
 class CardItemWidget extends StatelessWidget {
-  final ItemAttribute itemAttribute;
+  final ListItemCategory itemCategory;
   final bool isActive;
+  final Function function;
   const CardItemWidget(
-      {super.key, required this.itemAttribute, required this.isActive});
+      {super.key,
+      required this.itemCategory,
+      required this.isActive,
+      required this.function});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        context
-            .read<FilterItemsCubit>()
-            .changeItemAttribute(itemAttribute: itemAttribute);
-
-      },
+      onTap: () => function(),
       child: Container(
-        width: 100,
+        width: 170,
         height: 50,
-        margin: EdgeInsets.all(10),
-        color: isActive ? Colors.yellow : Colors.black,
-        child: Text(itemAttribute.name),
+        margin: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+            color: isActive ? Colors.yellow : Colors.red[900],
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            border: Border.all(color: Colors.black)),
+        alignment: Alignment.center,
+        child: AutoSizeText(itemCategory.name,
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 14,
+              letterSpacing: 2,
+              fontWeight: FontWeight.bold,
+            )),
       ),
     );
   }
 }
 
-class ItemWidget extends StatefulWidget {
+class ItemWidget extends StatelessWidget {
   final Item item;
   const ItemWidget({super.key, required this.item});
 
-  @override
-  State<ItemWidget> createState() => _ItemWidgetState();
-}
-
-class _ItemWidgetState extends State<ItemWidget> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
@@ -53,46 +53,55 @@ class _ItemWidgetState extends State<ItemWidget> {
         axis: FlipAxis.vertical,
         enableController: false,
         frontWidget: Container(
+          padding: EdgeInsets.all(size.width * 0.05),
           decoration: BoxDecoration(
               color: Colors.grey[200], borderRadius: BorderRadius.circular(20)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                widget.item.name,
+              AutoSizeText(
+                item.name,
+                maxLines: 1,
                 style: const TextStyle(fontSize: 20, letterSpacing: 2),
               ),
-              CachedNetworkImage(
-                imageUrl: widget.item.sprite,
-                width: size.width * 0.15,
-                height: size.width * 0.15,
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-                progressIndicatorBuilder: (context, url, progress) {
-                  return const CircularProgressIndicator(color: Colors.blue);
-                },
-              )
+              item.sprite.substring(0, 5) == "https"
+                  ? CachedNetworkImage(
+                      imageUrl: item.sprite,
+                      width: size.width * 0.15,
+                      height: size.width * 0.15,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                      progressIndicatorBuilder: (context, url, progress) =>
+                          const CircularProgressIndicator(color: Colors.blue),
+                    )
+                  : Image.asset(item.sprite,
+                      width: size.width * 0.15,
+                      height: size.width * 0.15,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high)
             ],
           ),
         ),
         backWidget: Container(
-          decoration: BoxDecoration(
-              color: Colors.grey[400], borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            padding: EdgeInsets.all(size.width * 0.03),
+            decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(20)),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Cost: ${widget.item.cost.toString()}",
+                        "Cost: ${item.cost.toString()}",
+                        style: const TextStyle(fontSize: 10, letterSpacing: 2),
+                      ),
+                  Expanded(
+                      child: AutoSizeText(
+                    item.descriptionEn,
+                    maxLines: 10,
                     style: const TextStyle(fontSize: 10, letterSpacing: 2),
-                  ),
-                  Text(
-                    widget.item.descriptionEn,
-                    style: TextStyle(fontSize: 10, letterSpacing: 2),
-                  ),
-                ],
-              )),
-        ));
+                  ))
+                ])));
   }
 }

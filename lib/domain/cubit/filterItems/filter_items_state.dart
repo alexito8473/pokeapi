@@ -1,10 +1,10 @@
 part of 'filter_items_cubit.dart';
 
 class FilterItemsState {
-  final ItemAttribute itemAttribute;
-  const FilterItemsState({required this.itemAttribute});
+  final ListItemCategory listItemCategory;
+  const FilterItemsState({required this.listItemCategory});
 
   factory FilterItemsState.init() {
-    return const FilterItemsState(itemAttribute: ItemAttribute.COUNTABLE);
+    return const FilterItemsState(listItemCategory: ListItemCategory.STAT_BOOSTS);
   }
 }
