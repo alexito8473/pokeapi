@@ -16,8 +16,15 @@ class CardItemWidget extends StatelessWidget {
       required this.isActive,
       required this.function});
 
+  Color colorBackground({required bool isDarkMode, required bool isActive}) {
+    Color active = isDarkMode ? Colors.green[900]! : Colors.yellow;
+    Color noActive = isDarkMode ? Colors.blue[900]! : Colors.red[900]!;
+    return isActive ? active : noActive;
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () => function(),
       child: Container(
@@ -25,9 +32,9 @@ class CardItemWidget extends StatelessWidget {
         height: 50,
         margin: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-            color: isActive ? Colors.yellow : Colors.red[900],
+            color: colorBackground(isDarkMode: isDarkMode, isActive: isActive),
             borderRadius: const BorderRadius.all(Radius.circular(20)),
-            border: Border.all(color: Colors.black)),
+            border: Border.all(color: isDarkMode?Colors.white:Colors.black)),
         alignment: Alignment.center,
         child: AutoSizeText(itemCategory.name,
             maxLines: 1,
@@ -48,14 +55,18 @@ class ItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return GestureFlipCard(
         animationDuration: const Duration(milliseconds: 500),
         axis: FlipAxis.vertical,
         enableController: false,
-        frontWidget: Container(
+        frontWidget: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
           padding: EdgeInsets.all(size.width * 0.05),
           decoration: BoxDecoration(
-              color: Colors.grey[200], borderRadius: BorderRadius.circular(20)),
+              color:
+                  isDarkMode ? Colors.white.withOpacity(0.3) : Colors.grey[200],
+              borderRadius: BorderRadius.circular(20)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -86,16 +97,18 @@ class ItemWidget extends StatelessWidget {
         backWidget: Container(
             padding: EdgeInsets.all(size.width * 0.03),
             decoration: BoxDecoration(
-                color: Colors.grey[400],
+                color: isDarkMode
+                    ? Colors.white.withOpacity(0.2)
+                    : Colors.grey[400],
                 borderRadius: BorderRadius.circular(20)),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                        "Cost: ${item.cost.toString()}",
-                        style: const TextStyle(fontSize: 10, letterSpacing: 2),
-                      ),
+                    "Cost: ${item.cost.toString()}",
+                    style: const TextStyle(fontSize: 10, letterSpacing: 2),
+                  ),
                   Expanded(
                       child: AutoSizeText(
                     item.descriptionEn,

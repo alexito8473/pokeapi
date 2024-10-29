@@ -193,6 +193,7 @@ class Pokemon {
   final List<String> sprites;
   final List<Move>? listMoves;
   final int? weight;
+  final int? height;
   final bool haveAllData;
   const Pokemon(
       {required this.name,
@@ -203,5 +204,6 @@ class Pokemon {
       this.listType,
       this.haveAllData = false,
       required this.sprites,
-      required this.listStats});
+      required this.listStats,
+      this.height});
 }

@@ -1,6 +1,11 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokeapi/data/model/pokemon.dart';
+import 'package:pokeapi/domain/cubit/changeMode/change_mode_cubit.dart';
+import 'package:pokeapi/main.dart';
+import 'package:pokeapi/presentation/widgets/pokemon_widget.dart';
 
 class PokemonScreen extends StatefulWidget {
   final Pokemon pokemon;
@@ -13,9 +18,15 @@ class PokemonScreen extends StatefulWidget {
 class _PokemonScreenState extends State<PokemonScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _controller;
+  late final List<Widget> listWidget;
   @override
   void initState() {
-    _controller = TabController(length: 2, vsync: this);
+    _controller = TabController(length: 3, vsync: this);
+    listWidget = [
+      AboutMePokemon(pokemon: widget.pokemon),
+      StatsPokemon(pokemon: widget.pokemon),
+      MovePokemon(pokemon: widget.pokemon)
+    ];
     super.initState();
   }
 
@@ -28,10 +39,9 @@ class _PokemonScreenState extends State<PokemonScreen>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
-    return Container(
+    return SizedBox(
         width: size.width,
         height: size.height,
-        color: Colors.white,
         child: Container(
             width: size.width,
             height: size.height,
@@ -39,28 +49,37 @@ class _PokemonScreenState extends State<PokemonScreen>
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.center,
-                    stops: const [
-                  0,
-                  0.3,
-                  1
-                ],
                     colors: [
                   widget.pokemon.listType![0].color,
-                  widget.pokemon.listType![0].color.withOpacity(0.8),
-                  Colors.white
+
+                  context.watch<ChangeModeCubit>().state.isDarkMode
+                      ? Colors.black
+                      : Colors.white
                 ])),
             child: Scaffold(
                 backgroundColor: Colors.transparent,
                 appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                ),
+                    backgroundColor: Colors.transparent,
+                    flexibleSpace: SafeArea(
+                        child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                          padding: EdgeInsets.only(right: size.width * 0.1),
+                          child: AutoSizeText(
+                              widget.pokemon.name
+                                      .substring(0, 1)
+                                      .toUpperCase() +
+                                  widget.pokemon.name.substring(1),
+                              style: const TextStyle(
+                                  letterSpacing: 2, fontSize: 25))),
+                    ))),
                 body: SizedBox(
                     width: size.width,
                     height: size.height,
                     child: Column(children: [
                       SizedBox(
                         width: size.width,
-                        height: size.height * 0.4,
+                        height: size.height * 0.35,
                         child: CarouselView(
                             itemSnapping: true,
                             backgroundColor: Colors.transparent,
@@ -92,43 +111,23 @@ class _PokemonScreenState extends State<PokemonScreen>
                                     )))),
                       ),
                       SizedBox(
-                        width: size.width,
-                        height: size.height * 0.1,
-                        child: TabBar(
-                            controller: _controller,
-                            labelColor: Colors.blueGrey,
-                            dividerColor: Colors.transparent,
-                            automaticIndicatorColorAdjustment: false,
-                            enableFeedback: false,
-
-                            indicatorColor: Colors.transparent,
-                            tabs: const [
-                              Tab(text: 'Sobre mi'),
-                              Tab(text: 'Tab 2'),
-                            ]),
-                      ),
+                          width: size.width,
+                          height: size.height * 0.1,
+                          child: TabBar(
+                              controller: _controller,
+                              labelColor: widget.pokemon.listType![0].color,
+                              dividerColor: Colors.transparent,
+                              automaticIndicatorColorAdjustment: false,
+                              enableFeedback: false,
+                              indicatorColor: Colors.transparent,
+                              tabs: const [
+                                Tab(text: 'About me'),
+                                Tab(text: 'Stats'),
+                                Tab(text: 'Move')
+                              ])),
                       Expanded(
-                          child: TabBarView(controller: _controller, children: [
-                            _AboutMePokemon(pokemon: widget.pokemon,),
-                        Container(
-                          color: Colors.blue,
-                        )
-                      ]))
+                          child: TabBarView(
+                              controller: _controller, children: listWidget))
                     ])))));
   }
 }
-
-class _AboutMePokemon extends StatelessWidget {
-  final Pokemon pokemon;
-  const _AboutMePokemon({super.key, required this.pokemon});
-
-  @override
-  Widget build(BuildContext context) {
-    return  Column(
-        children: [
-          Text(pokemon.weight.toString())
-        ],
-      );
-  }
-}
-

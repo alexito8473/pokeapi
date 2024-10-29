@@ -62,7 +62,9 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
                 if (responseDataAbility.statusCode == 200) {
                   dataAbility = jsonDecode(responseDataAbility.body);
                   listAbility.add(Ability(
-                      effectEntries: dataAbility["effect_entries"][0]["effect"],
+                      effectEntries: dataAbility["effect_entries"].firstWhere(
+                        (element) => element["language"]["name"] == "en",
+                      )["effect"],
                       name: dataOnePokemon["abilities"][i]["ability"]["name"],
                       whenAppeared: dataAbility["generation"]["name"],
                       isHidden: dataOnePokemon["abilities"][i]["is_hidden"]));
@@ -70,7 +72,6 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
               }
               for (int i = 0; i < dataOnePokemon["moves"].length; i++) {
                 listDetailsMove = List.empty(growable: true);
-
                 for (int j = 0;
                     j <
                         dataOnePokemon["moves"][i]["version_group_details"]
@@ -103,6 +104,7 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
                   sprites: pokemon.sprites,
                   listType: pokemon.listType,
                   weight: dataOnePokemon["weight"],
+                  height: dataOnePokemon["height"],
                   haveAllData: true,
                   listAbilities: listAbility,
                   listStats: listStats,

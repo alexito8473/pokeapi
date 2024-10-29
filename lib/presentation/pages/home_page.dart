@@ -13,25 +13,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late List<Widget> _listWidget;
-  late Widget _view;
   late NotchBottomBarController _controller;
   double positionAnimation = 0;
   int position = 0;
   @override
   void initState() {
     _listWidget = [
-      const GridPokemonsScreen(),
+      StatefulBuilder(
+          builder: (context, setState) => const GridPokemonsScreen()),
       const GridItemsScreen(),
       Container(),
     ];
-    _view = _listWidget[position];
     _controller = NotchBottomBarController(index: position);
     super.initState();
     Future.delayed(
       const Duration(milliseconds: 600),
       () {
         setState(() {
-          positionAnimation = -1;
+          positionAnimation = -2;
         });
       },
     );
@@ -41,7 +40,6 @@ class _HomePageState extends State<HomePage> {
     if (position == value) return;
     setState(() {
       position = value;
-      _view = _listWidget[position];
     });
   }
 
@@ -54,7 +52,7 @@ class _HomePageState extends State<HomePage> {
           Positioned.fill(
               child: HomeScreen(
                   changeView: _changeView,
-                  view: _view,
+                  view: IndexedStack(index: position, children: _listWidget),
                   currentIndex: position,
                   controller: _controller)),
           AnimatedPositioned(
@@ -67,13 +65,11 @@ class _HomePageState extends State<HomePage> {
                   width: size.width,
                   height: size.height * 0.6)),
           AnimatedPositioned(
-              top: size.height * 0.6 * positionAnimation,
-              left: 0,
+              top: size.height * 0.8 * positionAnimation,
               curve: Curves.easeIn,
               duration: const Duration(seconds: 1),
               child: Image.asset("assets/pokeball/pokeballTop.png",
-                  fit: BoxFit.contain,
-                  width: size.width))
+                  fit: BoxFit.contain, width: size.width))
         ]));
   }
 }

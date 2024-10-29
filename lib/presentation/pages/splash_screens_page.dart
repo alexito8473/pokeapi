@@ -39,6 +39,9 @@ class _SplashScreensPageState extends State<SplashScreensPage>
         listeners: [
           BlocListener<DataPokemonBloc, DataPokemonState>(
             listener: (context, state) {
+              /*
+
+            */
               if (state.listPokemons.length > 50) {
                 setState(() => positionAnimation = 0);
               }
@@ -54,7 +57,6 @@ class _SplashScreensPageState extends State<SplashScreensPage>
           })
         ],
         child: Scaffold(
-            backgroundColor: Colors.grey[100],
             body: Stack(
               children: [
                 Positioned.fill(
@@ -79,15 +81,6 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                                   child: Image.asset(
                                       "assets/splash/loading.gif",
                                       width: size.width * .6)),
-                              Container(
-                                color: Colors.grey,
-                                child: Text(context
-                                    .watch<DataPokemonBloc>()
-                                    .state
-                                    .listPokemons
-                                    .length
-                                    .toString()),
-                              ),
                               Padding(
                                   padding: EdgeInsets.only(
                                       top: MediaQuery.sizeOf(context).height *
@@ -95,12 +88,12 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                                   child: Center(
                                       child: !haveWifi
                                           ? const Text(
-                                              "No tienes conexión a internet")
+                                              "You don't have internet connection")
                                           : AnimatedTextKit(
                                               repeatForever: true,
                                               animatedTexts: [
                                                 TypewriterAnimatedText(
-                                                    'Cargando ...',
+                                                    'Charging ...',
                                                     cursor: "",
                                                     textStyle: const TextStyle(
                                                       fontSize: 20.0,
@@ -111,7 +104,7 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                                                     speed: const Duration(
                                                         milliseconds: 200)),
                                                 TypewriterAnimatedText(
-                                                    'Conectándose a la api ...',
+                                                    'Connecting to the API...',
                                                     cursor: "",
                                                     textStyle: const TextStyle(
                                                       fontSize: 20.0,
@@ -122,7 +115,7 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                                                     speed: const Duration(
                                                         milliseconds: 200)),
                                                 TypewriterAnimatedText(
-                                                    'Obteniendo datos ...',
+                                                    'Getting data...',
                                                     cursor: "",
                                                     textStyle: const TextStyle(
                                                         fontSize: 20.0,
@@ -149,8 +142,8 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                       height: size.height * 0.6,
                     )),
                 AnimatedPositioned(
-                    top: size.height * 0.6 * positionAnimation,
-                    left: 0,
+                    top: size.height * 0.8 * positionAnimation,
+                    curve: Curves.easeIn,
                     duration: const Duration(seconds: 1),
                     child: Image.asset("assets/pokeball/pokeballTop.png",
                         fit: BoxFit.contain, width: size.width))

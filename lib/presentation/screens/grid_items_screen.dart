@@ -8,14 +8,9 @@ import 'package:pokeapi/domain/cubit/expandFilters/expand_filter_cubit.dart';
 import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
 import 'package:pokeapi/presentation/widgets/item_widget.dart';
 
-class GridItemsScreen extends StatefulWidget {
+class GridItemsScreen extends StatelessWidget {
   const GridItemsScreen({super.key});
 
-  @override
-  State<GridItemsScreen> createState() => _GridItemsScreenState();
-}
-
-class _GridItemsScreenState extends State<GridItemsScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
@@ -74,9 +69,8 @@ class _GridItemsScreenState extends State<GridItemsScreen> {
                               crossAxisSpacing: 10.0,
                               childAspectRatio: 1),
                       itemCount: listItems.length,
-                      itemBuilder: (context, index) {
-                        return ItemWidget(item: listItems[index]);
-                      }))
+                      itemBuilder: (context, index) =>
+                          ItemWidget(item: listItems[index])))
         ]))
       ]);
     });

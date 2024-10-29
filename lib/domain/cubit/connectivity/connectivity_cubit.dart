@@ -12,13 +12,11 @@ class ConnectivityCubit extends Cubit<ConnectivityState> {
     StreamSubscription<List<ConnectivityResult>> subscription = Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> result) {
-      if (result.contains(ConnectivityResult.wifi) ||
-          result.contains(ConnectivityResult.ethernet) ||
-          result.contains(ConnectivityResult.mobile)) {
-        emit(const ConnectivityWifiOn());
-      } else {
-        emit(const ConnectivityWifiOff());
-      }
+      result.contains(ConnectivityResult.wifi) ||
+              result.contains(ConnectivityResult.ethernet) ||
+              result.contains(ConnectivityResult.mobile)
+          ? emit(const ConnectivityWifiOn())
+          : emit(const ConnectivityWifiOff());
     });
   }
 }

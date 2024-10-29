@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
+import 'package:pokeapi/domain/cubit/changeMode/change_mode_cubit.dart';
 import 'package:pokeapi/domain/cubit/expandFilters/expand_filter_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -18,39 +19,62 @@ class HomeScreen extends StatelessWidget {
       required this.view,
       required this.currentIndex,
       required this.controller});
+
+  Color colorControllerAppBar() {
+    return controller.index == 0
+        ? Colors.red
+        : controller.index == 1
+            ? Colors.blue
+            : Colors.green;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
         listeners: [
-          BlocListener<DataItemBloc,DataItemState>(listener: (context, state) {
-            if (state.isErrorObtainData) {
-              const snackBar = SnackBar(
-                elevation: 0,
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: Colors.transparent,
-                content: AwesomeSnackbarContent(
-                  title: 'Error obtain list items',
-                  message:
-                  '',
-                  contentType: ContentType.failure,
-                ),
-              );
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(snackBar);
-            }
-          },),
-          BlocListener<DataPokemonBloc, DataPokemonState>(
+          BlocListener<DataItemBloc, DataItemState>(
             listener: (context, state) {
               if (state.isErrorObtainData) {
-                const snackBar = SnackBar(
+                TextStyle textStyle = TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black);
+                var snackBar = SnackBar(
                   elevation: 0,
                   behavior: SnackBarBehavior.floating,
                   backgroundColor: Colors.transparent,
                   content: AwesomeSnackbarContent(
-                    title: 'On Snap!',
-                    message:
-                        'This is an example error message that will be shown in the body of snackbar!',
+                    color: Colors.red,
+                    titleTextStyle: textStyle,
+                    messageTextStyle: textStyle,
+                    title: 'Error obtain list items',
+                    message: 'Could not get item data',
+                    contentType: ContentType.failure,
+                  ),
+                );
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(snackBar);
+              }
+            },
+          ),
+          BlocListener<DataPokemonBloc, DataPokemonState>(
+            listener: (context, state) {
+              if (state.isErrorObtainData) {
+                TextStyle textStyle = TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black);
+                var snackBar = SnackBar(
+                  elevation: 0,
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.transparent,
+                  content: AwesomeSnackbarContent(
+                    color: Colors.red,
+                    titleTextStyle: textStyle,
+                    messageTextStyle: textStyle,
+                    title: 'Error',
+                    message: 'Could not get pokemon data',
                     contentType: ContentType.failure,
                   ),
                 );
@@ -63,6 +87,7 @@ class HomeScreen extends StatelessWidget {
         ],
         child: Scaffold(
             appBar: AppBar(
+                surfaceTintColor: colorControllerAppBar(),
                 automaticallyImplyLeading: false,
                 actions: [
                   if (controller.index == 1)
@@ -74,13 +99,25 @@ class HomeScreen extends StatelessWidget {
                             .watch<ExpandFilterCubit>()
                             .state
                             .getIcon())),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
+                  IconButton(
+                      onPressed: () =>
+                          context.read<ChangeModeCubit>().changeMode(),
+                      icon: context.watch<ChangeModeCubit>().state.isDarkMode
+                          ? const Icon(Icons.dark_mode)
+                          : const Icon(Icons.light_mode)),
+                  //  IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
                 ],
                 toolbarHeight: 70,
                 title: const Text("Poke Api",
                     style: TextStyle(fontSize: 26, letterSpacing: 3))),
             extendBody: true,
             bottomNavigationBar: AnimatedNotchBottomBar(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black
+                    : Colors.white,
+                notchColor: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black
+                    : Colors.white,
                 notchBottomBarController: controller,
                 bottomBarItems: const [
                   BottomBarItem(
