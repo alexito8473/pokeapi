@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pokeapi/data/model/pokemon.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
+import 'package:pokeapi/presentation/utils/calculator_type_pokemon.dart';
 
 class PokemonCardWidget extends StatelessWidget {
   final Pokemon pokemon;
@@ -43,10 +46,10 @@ class PokemonCardWidget extends StatelessWidget {
                 colorFilter:
                     const ColorFilter.mode(Colors.black45, BlendMode.darken),
                 image: AssetImage(pokemon.listType![0].urlImageBackground)),
-            boxShadow:  [
+            boxShadow: [
               BoxShadow(
                   offset: const Offset(3, 3),
-                  color: isDarkMode?Colors.white12: Colors.black38,
+                  color: isDarkMode ? Colors.white12 : Colors.black38,
                   blurRadius: 2,
                   spreadRadius: 2)
             ],
@@ -62,7 +65,8 @@ class PokemonCardWidget extends StatelessWidget {
                   haveWifi: true, id: pokemon.id!, context: context))
             },
         child: Container(
-            decoration: _boxDecoration(isDarkMode:  Theme.of(context).brightness==Brightness.dark),
+            decoration: _boxDecoration(
+                isDarkMode: Theme.of(context).brightness == Brightness.dark),
             padding: const EdgeInsets.all(10),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -227,7 +231,7 @@ class AboutMePokemon extends StatelessWidget {
   }
 
   Widget _getContainerData(
-      {required Size size, required Widget left, required Widget right}) {
+      {required Size size, required Widget left, required Widget right,required BuildContext context}) {
     return Container(
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(10),
@@ -238,10 +242,11 @@ class AboutMePokemon extends StatelessWidget {
             color: Colors.grey.withOpacity(.4)),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [left, Container(color: Colors.black, width: 1), right]));
+            children: [left, Container(color: Theme.of(context).dividerColor, width: 1,height: size.height*0.08,), right]));
   }
 
-  void _showBottomSheet({required BuildContext context, required Size size}) {
+  void _showBottomSheetListAbilities(
+      {required BuildContext context, required Size size}) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -251,13 +256,11 @@ class AboutMePokemon extends StatelessWidget {
               child: ListView.builder(
                   itemCount: pokemon.listAbilities!.length,
                   itemBuilder: (context, index) {
-                    List<String> listContain =
-                        pokemon.listAbilities![index].effectEntries
-                            .split("\n")
-                            .where(
-                              (element) => element.trim().isNotEmpty,
-                            )
-                            .toList();
+                    List<String> listContain = pokemon
+                        .listAbilities![index].effectEntries
+                        .split("\n")
+                        .where((element) => element.trim().isNotEmpty)
+                        .toList();
                     return Card(
                         color: Colors.orange.withOpacity(0.6),
                         child: Container(
@@ -283,36 +286,36 @@ class AboutMePokemon extends StatelessWidget {
                                       ])),
                               Expanded(
                                   child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: List.generate(
-                                    listContain.length,
-                                    (index2) {
-                                      return Container(
-                                        margin: const EdgeInsets.only(left: 10),
-                                        padding: EdgeInsets.only(
-                                            right: size.width * 0.05,
-                                            top: size.height * 0.01,
-                                            bottom: size.height * 0.01),
-                                        decoration: BoxDecoration(
-                                            border: Border(
-                                                right: BorderSide(
-                                                    color: listContain.length -
-                                                                1 ==
-                                                            index2
-                                                        ? Colors.transparent
-                                                        : Colors.black))),
-                                        width: size.width * 0.7,
-                                        child: AutoSizeText(listContain[index2],
-                                            minFontSize: 10,
-                                            textAlign: TextAlign.justify,
-                                            style: const TextStyle(
-                                                letterSpacing: 1)),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )),
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                          children: List.generate(
+                                              listContain.length, (index2) {
+                                        return Container(
+                                            margin:
+                                                const EdgeInsets.only(left: 10),
+                                            padding: EdgeInsets.only(
+                                                right: size.width * 0.05,
+                                                top: size.height * 0.01,
+                                                bottom: size.height * 0.01),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    right: BorderSide(
+                                                        color:
+                                                            listContain.length -
+                                                                        1 ==
+                                                                    index2
+                                                                ? Colors
+                                                                    .transparent
+                                                                : Colors
+                                                                    .black))),
+                                            width: size.width * 0.7,
+                                            child: AutoSizeText(
+                                                listContain[index2],
+                                                minFontSize: 10,
+                                                textAlign: TextAlign.justify,
+                                                style: const TextStyle(
+                                                    letterSpacing: 1)));
+                                      })))),
                               SizedBox(
                                   height: 20,
                                   child: AutoSizeText(
@@ -324,6 +327,62 @@ class AboutMePokemon extends StatelessWidget {
         });
   }
 
+  void _showBottomSheetListTypes(
+      {required BuildContext context, required Size size}) {
+    Map<LevelResistance, List<TypePokemon>> mapLevelResistance =
+        CalculatorTypePokemon.calculateListTypePokemonWeakAndResistance(
+            pokemon: pokemon);
+
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              width: size.width,
+              height: size.height,
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(vertical: size.height * 0.05),
+                itemCount: mapLevelResistance.keys.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                      color: pokemon.listType![0].color.withOpacity(0.3),
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: size.height * 0.02),
+                        child: Column(
+                          children: [
+                            AutoSizeText(
+                                mapLevelResistance.keys.toList()[index].title,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                    fontSize: 20, letterSpacing: 1)),
+                            const SizedBox(height: 10),
+                            Align(
+                                alignment: Alignment.center,
+                                child: Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  alignment: WrapAlignment.center,
+                                  children: List.generate(
+                                    mapLevelResistance.values
+                                        .toList()[index]
+                                        .length,
+                                    (index2) {
+                                      return Image.asset(mapLevelResistance
+                                          .values
+                                          .toList()[index][index2]
+                                          .urlImageType);
+                                    },
+                                  ),
+                                ))
+                          ],
+                        ),
+                      ));
+                },
+              ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
@@ -331,25 +390,33 @@ class AboutMePokemon extends StatelessWidget {
       children: [
         _getContainerData(
             size: size,
-            right: getColumn(up: "${pokemon.weight! * 0.1} Kg", down: "Weight"),
+            right: getColumn(
+                up: "${(pokemon.weight! * 0.1).toStringAsFixed(2)} Kg",
+                down: "Weight"),
             left: getColumn(
                 up: "${(pokemon.height! * 0.1).toStringAsFixed(2)} m",
-                down: "Height")),
+                down: "Height"), context: context),
         _getContainerData(
             size: size,
             right: Expanded(
-                child: getColumnList(
-                    up: pokemon.listType!.map((e) => e.urlImageType).toList(),
-                    isListImage: true,
-                    down: "Type")),
+                child: InkWell(
+                    onTap: () =>
+                        _showBottomSheetListTypes(context: context, size: size),
+                    child: getColumnList(
+                        up: pokemon.listType!
+                            .map((e) => e.urlImageType)
+                            .toList(),
+                        isListImage: true,
+                        down: "Type"))),
             left: Expanded(
                 child: InkWell(
-                    onTap: () => _showBottomSheet(context: context, size: size),
-                    child: getColumnList(
+                    onTap: () => _showBottomSheetListAbilities(
+                        context: context, size: size),
+                    child: getColumn(
                         up: pokemon.listAbilities!
-                            .map((e) => "${e.name} ")
-                            .toList(),
-                        down: "Abilities"))))
+                            .map((e) => "${e.name.replaceAll("-", " ")} ")
+                            .toList().join(", "),
+                        down: "Abilities"))), context: context)
       ],
     );
   }
@@ -374,7 +441,9 @@ class MovePokemon extends StatelessWidget {
                   children: List.generate(
                       pokemon.listMoves![index].detailsMoves.length, (index2) {
                     return Card(
-                        color: Theme.of(context).brightness==Brightness.dark?Colors.black.withOpacity(0.4): Colors.white.withOpacity(0.4),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withOpacity(0.4)
+                            : Colors.white.withOpacity(0.4),
                         child: Padding(
                             padding: EdgeInsets.all(size.width * 0.015),
                             child: Column(
@@ -388,7 +457,7 @@ class MovePokemon extends StatelessWidget {
                                       style: const TextStyle(letterSpacing: 1)),
                                   AutoSizeText(
                                       "Level obtain: ${pokemon.listMoves![index].detailsMoves[index2].level}",
-                                      style: const TextStyle(letterSpacing: 1)),
+                                      style: const TextStyle(letterSpacing: 1))
                                 ])));
                   })));
         });

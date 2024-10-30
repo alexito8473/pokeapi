@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokeapi/data/model/pokemon.dart';
 import 'package:pokeapi/domain/cubit/changeMode/change_mode_cubit.dart';
-import 'package:pokeapi/main.dart';
 import 'package:pokeapi/presentation/widgets/pokemon_widget.dart';
 
 class PokemonScreen extends StatefulWidget {
@@ -51,7 +50,6 @@ class _PokemonScreenState extends State<PokemonScreen>
                     end: Alignment.center,
                     colors: [
                   widget.pokemon.listType![0].color,
-
                   context.watch<ChangeModeCubit>().state.isDarkMode
                       ? Colors.black
                       : Colors.white

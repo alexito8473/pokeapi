@@ -55,7 +55,6 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
                 "${Constants.urlObtainAdvancedDataPokemon}${pokemon.id}/"));
             if (responseDataOnePokemon.statusCode == 200) {
               dataOnePokemon = jsonDecode(responseDataOnePokemon.body);
-
               for (int i = 0; i < dataOnePokemon["abilities"].length; i++) {
                 responseDataAbility = await http.get(Uri.parse(
                     dataOnePokemon["abilities"][i]["ability"]["url"]));

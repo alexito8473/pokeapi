@@ -1,5 +1,14 @@
 import 'dart:ui';
-
+enum LevelResistance{
+  SUPER_WEAK(title: "Super weak (4×)"),
+  WEAK(title: "Weak (2×)"),
+  NORMAL(title: "Normal (1×)"),
+  RESISTANCE(title: "Resistance (0.5×)"),
+  SUPER_RESISTANCE(title: "Super resistance (0.25×)"),
+  INMUNE(title: "Inmune (0×)"),;
+  final String title;
+  const LevelResistance({required this.title});
+}
 enum TypePokemon {
   NORMAL(
       urlImageType: "assets/type/normal.png",
@@ -85,6 +94,177 @@ enum TypePokemon {
       {required this.urlImageType,
       required this.color,
       required this.urlImageBackground});
+
+  List<TypePokemon> getWeak() {
+    switch (this) {
+      case TypePokemon.NORMAL:
+        return [TypePokemon.FIGHTING];
+      case TypePokemon.FIGHTING:
+        return [TypePokemon.FLYING, TypePokemon.PSYCHIC, TypePokemon.FAIRY];
+      case TypePokemon.FLYING:
+        return [TypePokemon.ROCK, TypePokemon.ELECTRIC, TypePokemon.ICE];
+      case TypePokemon.POISON:
+        return [TypePokemon.GROUND, TypePokemon.PSYCHIC];
+      case TypePokemon.GROUND:
+        return [TypePokemon.WATER, TypePokemon.GRASS, TypePokemon.ICE];
+      case TypePokemon.ROCK:
+        return [
+          TypePokemon.FIGHTING,
+          TypePokemon.GROUND,
+          TypePokemon.STEEL,
+          TypePokemon.WATER,
+          TypePokemon.GRASS
+        ];
+      case TypePokemon.BUG:
+        return [TypePokemon.FLYING, TypePokemon.ROCK, TypePokemon.FIRE];
+      case TypePokemon.GHOST:
+        return [TypePokemon.GHOST, TypePokemon.SHADOW];
+      case TypePokemon.STEEL:
+        return [TypePokemon.FIGHTING, TypePokemon.GROUND, TypePokemon.FIRE];
+      case TypePokemon.FIRE:
+        return [TypePokemon.GROUND, TypePokemon.ROCK, TypePokemon.WATER];
+      case TypePokemon.WATER:
+        return [TypePokemon.GRASS, TypePokemon.ELECTRIC];
+      case TypePokemon.GRASS:
+        return [
+          TypePokemon.FLYING,
+          TypePokemon.POISON,
+          TypePokemon.BUG,
+          TypePokemon.FIRE,
+          TypePokemon.ICE
+        ];
+      case TypePokemon.ELECTRIC:
+        return [TypePokemon.GROUND];
+      case TypePokemon.PSYCHIC:
+        return [TypePokemon.BUG, TypePokemon.GHOST, TypePokemon.SHADOW];
+      case TypePokemon.ICE:
+        return [
+          TypePokemon.FIGHTING,
+          TypePokemon.ROCK,
+          TypePokemon.STEEL,
+          TypePokemon.FIRE
+        ];
+      case TypePokemon.DRAGON:
+        return [TypePokemon.DRAGON, TypePokemon.ICE, TypePokemon.FAIRY];
+      case TypePokemon.FAIRY:
+        return [TypePokemon.STEEL, TypePokemon.POISON];
+      case TypePokemon.SHADOW:
+        return [TypePokemon.FIGHTING, TypePokemon.BUG, TypePokemon.FAIRY];
+      case TypePokemon.STELLAR:
+        return [];
+    }
+  }
+
+  List<TypePokemon> getResistance() {
+    switch (this) {
+      case TypePokemon.FAIRY:
+        return [TypePokemon.FIGHTING, TypePokemon.BUG, TypePokemon.SHADOW];
+      case TypePokemon.SHADOW:
+        return [TypePokemon.GHOST, TypePokemon.SHADOW];
+      case TypePokemon.DRAGON:
+        return [
+          TypePokemon.FIRE,
+          TypePokemon.WATER,
+          TypePokemon.GRASS,
+          TypePokemon.ELECTRIC
+        ];
+      case TypePokemon.ICE:
+        return [TypePokemon.ICE];
+      case TypePokemon.PSYCHIC:
+        return [TypePokemon.FIGHTING, TypePokemon.PSYCHIC];
+      case TypePokemon.ELECTRIC:
+        return [TypePokemon.FLYING, TypePokemon.STEEL, TypePokemon.ELECTRIC];
+      case TypePokemon.GRASS:
+        return [
+          TypePokemon.GROUND,
+          TypePokemon.WATER,
+          TypePokemon.GRASS,
+          TypePokemon.ELECTRIC
+        ];
+      case TypePokemon.WATER:
+        return [
+          TypePokemon.STEEL,
+          TypePokemon.FIRE,
+          TypePokemon.WATER,
+          TypePokemon.ICE
+        ];
+      case TypePokemon.FIRE:
+        return [
+          TypePokemon.BUG,
+          TypePokemon.STEEL,
+          TypePokemon.FIRE,
+          TypePokemon.GRASS,
+          TypePokemon.ICE,
+          TypePokemon.FAIRY
+        ];
+      case TypePokemon.STEEL:
+        return [
+          TypePokemon.NORMAL,
+          TypePokemon.FLYING,
+          TypePokemon.ROCK,
+          TypePokemon.BUG,
+          TypePokemon.STEEL,
+          TypePokemon.GRASS,
+          TypePokemon.PSYCHIC,
+          TypePokemon.ICE,
+          TypePokemon.DRAGON,
+          TypePokemon.FAIRY
+        ];
+      case TypePokemon.GHOST:
+        return [TypePokemon.POISON, TypePokemon.BUG];
+      case TypePokemon.BUG:
+        return [TypePokemon.FIGHTING, TypePokemon.GROUND, TypePokemon.GRASS];
+      case TypePokemon.ROCK:
+        return [
+          TypePokemon.NORMAL,
+          TypePokemon.FLYING,
+          TypePokemon.POISON,
+          TypePokemon.FIRE
+        ];
+      case TypePokemon.GROUND:
+        return [TypePokemon.POISON, TypePokemon.ROCK];
+      case TypePokemon.POISON:
+        return [
+          TypePokemon.FIGHTING,
+          TypePokemon.POISON,
+          TypePokemon.BUG,
+          TypePokemon.GRASS,
+          TypePokemon.FAIRY
+        ];
+      case TypePokemon.FLYING:
+        return [TypePokemon.FIGHTING, TypePokemon.BUG, TypePokemon.GRASS];
+      case TypePokemon.FIGHTING:
+        return [
+          TypePokemon.ROCK,
+          TypePokemon.BUG,
+          TypePokemon.SHADOW,
+        ];
+      case TypePokemon.NORMAL || TypePokemon.STELLAR:
+        return [];
+    }
+  }
+
+  List<TypePokemon> getImmune() {
+    switch (this) {
+      case TypePokemon.NORMAL:
+        return [TypePokemon.GHOST];
+      case TypePokemon.FLYING:
+        return [TypePokemon.GROUND];
+      case TypePokemon.STEEL:
+        return [TypePokemon.POISON];
+      case TypePokemon.GHOST:
+        return [TypePokemon.NORMAL, TypePokemon.FIGHTING];
+      case TypePokemon.GROUND:
+        return [TypePokemon.ELECTRIC];
+      case TypePokemon.SHADOW:
+        return [TypePokemon.PSYCHIC];
+      case TypePokemon.FAIRY:
+        return [TypePokemon.DRAGON];
+      default:
+        return [];
+    }
+  }
+
   String getTitle() {
     switch (this) {
       case TypePokemon.NORMAL:

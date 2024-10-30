@@ -44,13 +44,12 @@ class HomeScreen extends StatelessWidget {
                   behavior: SnackBarBehavior.floating,
                   backgroundColor: Colors.transparent,
                   content: AwesomeSnackbarContent(
-                    color: Colors.red,
-                    titleTextStyle: textStyle,
-                    messageTextStyle: textStyle,
-                    title: 'Error obtain list items',
-                    message: 'Could not get item data',
-                    contentType: ContentType.failure,
-                  ),
+                      color: Colors.red,
+                      titleTextStyle: textStyle,
+                      messageTextStyle: textStyle,
+                      title: 'Error obtain list items',
+                      message: 'Could not get item data',
+                      contentType: ContentType.failure),
                 );
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
