@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokeapi/data/model/item.dart';
 import 'package:pokeapi/domain/blocs/dataItems/data_item_bloc.dart';
-import 'package:pokeapi/domain/cubit/connectivity/connectivity_cubit.dart';
 import 'package:pokeapi/domain/cubit/expandFilters/expand_filter_cubit.dart';
 import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
 import 'package:pokeapi/presentation/widgets/item_widget.dart';
@@ -17,7 +16,7 @@ class GridItemsScreen extends StatelessWidget {
     bool openFilter = context.watch<ExpandFilterCubit>().state.isExpandFilter;
     return BlocBuilder<DataItemBloc, DataItemState>(builder: (context, state) {
       List<Item>? listItems = context.read<DataItemBloc>().getItems(
-          clave: context.read<FilterItemsCubit>().state.listItemCategory.name);
+          clave: context.read<FilterItemsCubit>().state.listItemCategory);
       return Column(children: [
         AnimatedContainer(
             duration: const Duration(milliseconds: 500),
@@ -27,29 +26,26 @@ class GridItemsScreen extends StatelessWidget {
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
                     child: Wrap(
-                        children: List.generate(ListItemCategory.values.length,
-                            (index) {
-                      return CardItemWidget(
-                          itemCategory: ListItemCategory.values[index],
-                          isActive: ListItemCategory.values[index] ==
-                              context
-                                  .watch<FilterItemsCubit>()
-                                  .state
-                                  .listItemCategory,
-                          function: () {
-                            context
-                                .read<FilterItemsCubit>()
-                                .changeItemAttribute(
-                                    listItemCategory:
-                                        ListItemCategory.values[index]);
-                            context.read<DataItemBloc>().add(DataItemEvent(
-                                haveWifi: true,
-                                itemCategory: context
-                                    .read<FilterItemsCubit>()
-                                    .state
-                                    .listItemCategory));
-                          });
-                    }))))),
+                        children: List.generate(
+                            ListItemCategory.values.length,
+                            (index) => CardItemWidget(
+                                itemCategory: ListItemCategory.values[index],
+                                isActive: ListItemCategory.values[index] ==
+                                    context
+                                        .watch<FilterItemsCubit>()
+                                        .state
+                                        .listItemCategory,
+                                function: () {
+                                  context
+                                      .read<FilterItemsCubit>()
+                                      .changeItemAttribute(
+                                          listItemCategory:
+                                              ListItemCategory.values[index]);
+                                  context.read<DataItemBloc>().add(
+                                      DataItemEvent(
+                                          haveWifi: true,
+                                          itemCategory: ListItemCategory.values[index]));
+                                })))))),
         Expanded(
             child: CustomScrollView(slivers: [
           SliverPadding(
@@ -57,9 +53,9 @@ class GridItemsScreen extends StatelessWidget {
                   bottom: size.height * 0.15,
                   left: size.width * 0.05,
                   right: size.width * 0.05),
-              sliver: listItems == null
-                  ? const SliverToBoxAdapter(
-                      child: Center(child: CircularProgressIndicator()),
+              sliver: listItems!.isEmpty
+                  ? SliverFillRemaining(
+                      child: Center(child: Image.asset("assets/item/reloadItem.gif",width: size.width*0.3,)),
                     )
                   : SliverGrid.builder(
                       gridDelegate:

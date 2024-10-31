@@ -2,12 +2,13 @@ import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pokeapi/data/model/pokemon.dart';
+import 'package:pokeapi/data/model/typePokemon.dart';
 import 'package:pokeapi/domain/blocs/dataPokemon/data_pokemon_bloc.dart';
+import 'package:pokeapi/domain/cubit/filterPokemon/filter_pokemons_cubit.dart';
 import 'package:pokeapi/presentation/utils/calculator_type_pokemon.dart';
 
 class PokemonCardWidget extends StatelessWidget {
@@ -62,7 +63,13 @@ class PokemonCardWidget extends StatelessWidget {
     return GestureDetector(
         onTap: () => {
               context.read<DataPokemonBloc>().add(DataOnePokemonEvent(
-                  haveWifi: true, id: pokemon.id!, context: context))
+                  haveWifi: true,
+                  id: pokemon.id!,
+                  context: context,
+                  generationPokemon: context
+                      .read<FilterPokemonsCubit>()
+                      .state
+                      .generationPokemon))
             },
         child: Container(
             decoration: _boxDecoration(
@@ -72,9 +79,10 @@ class PokemonCardWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                      pokemon.name.substring(0, 1).toUpperCase() +
-                          pokemon.name.substring(1, pokemon.name.length),
+                  AutoSizeText(
+                (pokemon.name.substring(0, 1).toUpperCase() +
+                          pokemon.name.substring(1, pokemon.name.length)).replaceAll("-", " "),
+                      maxLines: 2,
                       style: const TextStyle(fontSize: 19, letterSpacing: 2)),
                   Expanded(
                       child: Row(
@@ -201,13 +209,12 @@ class AboutMePokemon extends StatelessWidget {
   const AboutMePokemon({super.key, required this.pokemon});
 
   Widget getColumn({required String up, required String down}) {
-    return Expanded(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(up.toString(), style: const TextStyle(letterSpacing: 1)),
       const SizedBox(height: 5),
       Text(down.toString(),
           style: TextStyle(color: Colors.black.withOpacity(0.4)))
-    ]));
+    ]);
   }
 
   Widget getColumnList(
@@ -231,7 +238,10 @@ class AboutMePokemon extends StatelessWidget {
   }
 
   Widget _getContainerData(
-      {required Size size, required Widget left, required Widget right,required BuildContext context}) {
+      {required Size size,
+      required Widget left,
+      required Widget right,
+      required BuildContext context}) {
     return Container(
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(10),
@@ -240,9 +250,15 @@ class AboutMePokemon extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: Colors.grey.withOpacity(.4)),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [left, Container(color: Theme.of(context).dividerColor, width: 1,height: size.height*0.08,), right]));
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          left,
+          Container(
+            color: Theme.of(context).dividerColor,
+            width: 1,
+            height: size.height * 0.08,
+          ),
+          right
+        ]));
   }
 
   void _showBottomSheetListAbilities(
@@ -331,7 +347,7 @@ class AboutMePokemon extends StatelessWidget {
       {required BuildContext context, required Size size}) {
     Map<LevelResistance, List<TypePokemon>> mapLevelResistance =
         CalculatorTypePokemon.calculateListTypePokemonWeakAndResistance(
-            pokemon: pokemon);
+            listTypePokemon: pokemon.listType!);
 
     showModalBottomSheet(
         context: context,
@@ -390,12 +406,15 @@ class AboutMePokemon extends StatelessWidget {
       children: [
         _getContainerData(
             size: size,
-            right: getColumn(
-                up: "${(pokemon.weight! * 0.1).toStringAsFixed(2)} Kg",
-                down: "Weight"),
-            left: getColumn(
-                up: "${(pokemon.height! * 0.1).toStringAsFixed(2)} m",
-                down: "Height"), context: context),
+            right: Expanded(
+                child: getColumn(
+                    up: "${(pokemon.weight! * 0.1).toStringAsFixed(2)} Kg",
+                    down: "Weight")),
+            left: Expanded(
+                child: getColumn(
+                    up: "${(pokemon.height! * 0.1).toStringAsFixed(2)} m",
+                    down: "Height")),
+            context: context),
         _getContainerData(
             size: size,
             right: Expanded(
@@ -415,8 +434,10 @@ class AboutMePokemon extends StatelessWidget {
                     child: getColumn(
                         up: pokemon.listAbilities!
                             .map((e) => "${e.name.replaceAll("-", " ")} ")
-                            .toList().join(", "),
-                        down: "Abilities"))), context: context)
+                            .toList()
+                            .join(", "),
+                        down: "Abilities"))),
+            context: context)
       ],
     );
   }

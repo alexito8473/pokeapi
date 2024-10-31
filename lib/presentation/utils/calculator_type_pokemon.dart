@@ -1,22 +1,23 @@
-import 'package:pokeapi/data/model/pokemon.dart';
+import 'package:pokeapi/data/model/typePokemon.dart';
 
 class CalculatorTypePokemon {
   static Map<LevelResistance, List<TypePokemon>>
-      calculateListTypePokemonWeakAndResistance({required Pokemon pokemon}) {
+      calculateListTypePokemonWeakAndResistance(
+          {required List<TypePokemon> listTypePokemon}) {
     Map<LevelResistance, List<TypePokemon>> mapLevelResistance = Map();
     mapLevelResistance[LevelResistance.NORMAL] = List.empty(growable: true);
     mapLevelResistance[LevelResistance.SUPER_WEAK] = List.empty(growable: true);
     mapLevelResistance[LevelResistance.SUPER_RESISTANCE] =
         List.empty(growable: true);
-    mapLevelResistance[LevelResistance.RESISTANCE] = pokemon.listType!
+    mapLevelResistance[LevelResistance.RESISTANCE] = listTypePokemon
         .map((e) => e.getResistance())
         .expand((element) => element)
         .toList();
-    mapLevelResistance[LevelResistance.WEAK] = pokemon.listType!
+    mapLevelResistance[LevelResistance.WEAK] = listTypePokemon
         .map((e) => e.getWeak())
         .expand((element) => element)
         .toList();
-    mapLevelResistance[LevelResistance.INMUNE] = pokemon.listType!
+    mapLevelResistance[LevelResistance.INMUNE] = listTypePokemon
         .map((e) => e.getImmune())
         .expand((element) => element)
         .toList();
@@ -36,12 +37,12 @@ class CalculatorTypePokemon {
     mapLevelResistance[LevelResistance.WEAK]!.removeWhere((element) =>
         mapLevelResistance[LevelResistance.NORMAL]!.contains(element));
 
-    calculateListSuperResistanceOrSuperWealTypePokemon(
+    _calculateListSuperResistanceOrSuperWealTypePokemon(
         listResistanceOrWeak: mapLevelResistance[LevelResistance.RESISTANCE]!,
         listVeryResistanceOrWeak:
             mapLevelResistance[LevelResistance.SUPER_RESISTANCE]!);
 
-    calculateListSuperResistanceOrSuperWealTypePokemon(
+    _calculateListSuperResistanceOrSuperWealTypePokemon(
         listResistanceOrWeak: mapLevelResistance[LevelResistance.WEAK]!,
         listVeryResistanceOrWeak:
             mapLevelResistance[LevelResistance.SUPER_WEAK]!);
@@ -73,7 +74,7 @@ class CalculatorTypePokemon {
       ..sort((a, b) => a.key.index.compareTo(b.key.index)));
   }
 
-  static void calculateListSuperResistanceOrSuperWealTypePokemon(
+  static void _calculateListSuperResistanceOrSuperWealTypePokemon(
       {required List<TypePokemon> listResistanceOrWeak,
       required List<TypePokemon> listVeryResistanceOrWeak}) {
     Map<TypePokemon, int> listTypePokemon = {};

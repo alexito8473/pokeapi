@@ -20,16 +20,15 @@ class HomeScreen extends StatelessWidget {
       required this.currentIndex,
       required this.controller});
 
-  Color colorControllerAppBar() {
-    return controller.index == 0
-        ? Colors.red
-        : controller.index == 1
-            ? Colors.blue
-            : Colors.green;
-  }
+  Color colorControllerAppBar() => controller.index == 0
+      ? Colors.red
+      : controller.index == 1
+          ? Colors.blue
+          : Colors.green;
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
     return MultiBlocListener(
         listeners: [
           BlocListener<DataItemBloc, DataItemState>(
@@ -80,6 +79,7 @@ class HomeScreen extends StatelessWidget {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(snackBar);
+              } else if(state.isCorrectDataOnePokemon){
               }
             },
           )
@@ -104,7 +104,6 @@ class HomeScreen extends StatelessWidget {
                       icon: context.watch<ChangeModeCubit>().state.isDarkMode
                           ? const Icon(Icons.dark_mode)
                           : const Icon(Icons.light_mode)),
-                  //  IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
                 ],
                 toolbarHeight: 70,
                 title: const Text("Poke Api",
@@ -112,11 +111,11 @@ class HomeScreen extends StatelessWidget {
             extendBody: true,
             bottomNavigationBar: AnimatedNotchBottomBar(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black
-                    : Colors.white,
+                    ? Colors.grey[900]!
+                    : Colors.grey[300]!,
                 notchColor: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black
-                    : Colors.white,
+                    ? Colors.grey[900]!
+                    : Colors.grey[300]!,
                 notchBottomBarController: controller,
                 bottomBarItems: const [
                   BottomBarItem(
@@ -131,10 +130,10 @@ class HomeScreen extends StatelessWidget {
                       activeItem: Icon(Icons.backpack, color: Colors.blue),
                       itemLabel: 'Objects'),
                   BottomBarItem(
-                      inActiveItem: Icon(Icons.movie_creation_outlined,
+                      inActiveItem: Icon(Icons.calculate_outlined,
                           color: Colors.blueGrey),
-                      activeItem: Icon(Icons.movie, color: Colors.green),
-                      itemLabel: 'Movie'),
+                      activeItem: Icon(Icons.calculate, color: Colors.green),
+                      itemLabel: 'Calculator'),
                 ],
                 onTap: (value) => changeView(value),
                 kIconSize: 20,

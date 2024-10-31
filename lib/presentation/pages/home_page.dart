@@ -1,5 +1,6 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:pokeapi/presentation/screens/calculator_screen.dart';
 import 'package:pokeapi/presentation/screens/grid_pokemons_screen.dart';
 import 'package:pokeapi/presentation/screens/home_screen.dart';
 import 'package:pokeapi/presentation/screens/grid_items_screen.dart';
@@ -19,21 +20,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _listWidget = [
-      StatefulBuilder(
-          builder: (context, setState) => const GridPokemonsScreen()),
+      const GridPokemonsScreen(),
       const GridItemsScreen(),
-      Container(),
+      const CalculatorScreen(),
     ];
     _controller = NotchBottomBarController(index: position);
     super.initState();
-    Future.delayed(
-      const Duration(milliseconds: 600),
-      () {
-        setState(() {
-          positionAnimation = -2;
-        });
-      },
-    );
+    Future.delayed(const Duration(milliseconds: 600), () {
+      setState(() {
+        positionAnimation = -2;
+      });
+    });
   }
 
   void _changeView(int value) {
@@ -52,7 +49,8 @@ class _HomePageState extends State<HomePage> {
           Positioned.fill(
               child: HomeScreen(
                   changeView: _changeView,
-                  view: IndexedStack(index: position, children: _listWidget),
+                 // view: IndexedStack(index: position, children: _listWidget),
+                  view: _listWidget[0],
                   currentIndex: position,
                   controller: _controller)),
           AnimatedPositioned(

@@ -4,7 +4,9 @@ class FilterItemsState {
   final ListItemCategory listItemCategory;
   const FilterItemsState({required this.listItemCategory});
 
-  factory FilterItemsState.init() {
-    return const FilterItemsState(listItemCategory: ListItemCategory.STAT_BOOSTS);
+  factory FilterItemsState.init({required SharedPreferences prefs}) {
+    return FilterItemsState(
+        listItemCategory: ListItemCategory.obtainListItemCategory(
+            prefs.getString(Constants.sharePreferenceItem)));
   }
 }

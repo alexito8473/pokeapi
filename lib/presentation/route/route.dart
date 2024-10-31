@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokeapi/data/model/pokemon.dart';
 import 'package:pokeapi/presentation/pages/home_page.dart';
+import 'package:pokeapi/presentation/pages/pokemon_page.dart';
 import 'package:pokeapi/presentation/pages/splash_screens_page.dart';
-import 'package:pokeapi/presentation/screens/pokemon_screen.dart';
 
 final GoRouter router = GoRouter(routes: <RouteBase>[
   GoRoute(

@@ -4,7 +4,8 @@ class ChangeModeState {
   final bool isDarkMode;
   const ChangeModeState({required this.isDarkMode});
 
-  factory ChangeModeState.init() {
-    return const ChangeModeState(isDarkMode: true);
+  factory ChangeModeState.init({required SharedPreferences prefs}) {
+    return ChangeModeState(
+        isDarkMode: prefs.getBool(Constants.sharePreferenceIsDarkMode) ?? true);
   }
 }

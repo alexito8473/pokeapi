@@ -7,19 +7,23 @@ import 'package:pokeapi/domain/cubit/changeMode/change_mode_cubit.dart';
 import 'package:pokeapi/domain/cubit/connectivity/connectivity_cubit.dart';
 import 'package:pokeapi/domain/cubit/expandFilters/expand_filter_cubit.dart';
 import 'package:pokeapi/domain/cubit/filterItems/filter_items_cubit.dart';
+import 'package:pokeapi/domain/cubit/filterPokemon/filter_pokemons_cubit.dart';
 
 import 'package:pokeapi/presentation/route/route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
-    runApp(const MyApp());
+          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+      .then((_) async {
+    runApp(MyApp(prefs: await SharedPreferences.getInstance()));
   });
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final SharedPreferences prefs;
+  const MyApp({super.key, required this.prefs});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -27,9 +31,10 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => DataPokemonBloc()),
           BlocProvider(create: (context) => DataItemBloc()),
           BlocProvider(create: (context) => ConnectivityCubit()),
-          BlocProvider(create: (context) => FilterItemsCubit()),
+          BlocProvider(create: (context) => FilterItemsCubit(prefs: prefs)),
           BlocProvider(create: (context) => ExpandFilterCubit()),
-          BlocProvider(create: (context) => ChangeModeCubit())
+          BlocProvider(create: (context) => ChangeModeCubit(prefs: prefs)),
+          BlocProvider(create: (context) => FilterPokemonsCubit(prefs: prefs))
         ],
         child: BlocBuilder<ChangeModeCubit, ChangeModeState>(
           builder: (context, state) {

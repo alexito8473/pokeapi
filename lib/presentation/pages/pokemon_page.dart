@@ -49,28 +49,24 @@ class _PokemonScreenState extends State<PokemonScreen>
                     begin: Alignment.topCenter,
                     end: Alignment.center,
                     colors: [
-                  widget.pokemon.listType![0].color,
-                  context.watch<ChangeModeCubit>().state.isDarkMode
-                      ? Colors.black
-                      : Colors.white
-                ])),
+                      widget.pokemon.listType![0].color,
+                      context.watch<ChangeModeCubit>().state.isDarkMode
+                          ? Colors.black
+                          : Colors.white
+                    ])),
             child: Scaffold(
                 backgroundColor: Colors.transparent,
                 appBar: AppBar(
                     backgroundColor: Colors.transparent,
-                    flexibleSpace: SafeArea(
-                        child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                          padding: EdgeInsets.only(right: size.width * 0.1),
-                          child: AutoSizeText(
-                              widget.pokemon.name
-                                      .substring(0, 1)
-                                      .toUpperCase() +
-                                  widget.pokemon.name.substring(1),
-                              style: const TextStyle(
-                                  letterSpacing: 2, fontSize: 25))),
-                    ))),
+                    title: AutoSizeText(
+                        (widget.pokemon.name
+                            .substring(0, 1)
+                            .toUpperCase() +
+                            widget.pokemon.name.substring(1)).replaceAll("-", " "),
+                        maxLines: 1,
+                        style: const TextStyle(
+                            letterSpacing: 2, fontSize: 25),
+                   )),
                 body: SizedBox(
                     width: size.width,
                     height: size.height,
@@ -84,7 +80,7 @@ class _PokemonScreenState extends State<PokemonScreen>
                             itemExtent: size.width,
                             children: List.generate(
                                 widget.pokemon.sprites.length,
-                                (index) => Hero(
+                                    (index) => Hero(
                                     tag: widget.pokemon.sprites[index],
                                     child: CachedNetworkImage(
                                       imageUrl: widget.pokemon.sprites[index],
@@ -94,18 +90,18 @@ class _PokemonScreenState extends State<PokemonScreen>
                                       fit: BoxFit.contain,
                                       progressIndicatorBuilder:
                                           (context, url, downloadProgress) =>
-                                              SizedBox(
-                                                  width: 95,
-                                                  child: Image.asset(
-                                                    "assets/pokeball/pokeball.gif",
-                                                    width: size.width * 0.1,
-                                                    height: size.width * 0.1,
-                                                    fit: BoxFit.contain,
-                                                    filterQuality:
-                                                        FilterQuality.high,
-                                                  )),
+                                          SizedBox(
+                                              width: 95,
+                                              child: Image.asset(
+                                                "assets/pokeball/pokeball.gif",
+                                                width: size.width * 0.1,
+                                                height: size.width * 0.1,
+                                                fit: BoxFit.contain,
+                                                filterQuality:
+                                                FilterQuality.high,
+                                              )),
                                       errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                                      const Icon(Icons.error),
                                     )))),
                       ),
                       SizedBox(

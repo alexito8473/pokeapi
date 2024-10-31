@@ -32,6 +32,19 @@ enum ListItemCategory {
   final int id;
 
   const ListItemCategory({required this.name, required this.id});
+
+  static ListItemCategory obtainListItemCategory(
+      String? listItemCategoryString) {
+    ListItemCategory item = ListItemCategory.STAT_BOOSTS;
+    if (listItemCategoryString != null) {
+      for (ListItemCategory listItemCategory in ListItemCategory.values) {
+        if (listItemCategory.name == listItemCategoryString) {
+          item = listItemCategory;
+        }
+      }
+    }
+    return item;
+  }
 }
 
 class Item {
