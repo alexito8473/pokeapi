@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 enum LevelResistance{
   SUPER_WEAK(title: "Super weak (4×)"),
   WEAK(title: "Weak (2×)"),
@@ -83,7 +85,7 @@ enum TypePokemon {
   STELLAR(
       urlImageType: "assets/type/stellar.png",
       urlImageBackground: "assets/backgroundPokemon/stellar.jpg",
-      color: Color.fromRGBO(254, 255, 254, 1)),
+      color: Colors.white),
   DARK(
       urlImageType: "assets/type/dark.png",
       urlImageBackground: "assets/backgroundPokemon/shadow.jpg",

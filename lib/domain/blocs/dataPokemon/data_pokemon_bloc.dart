@@ -132,7 +132,6 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
                   mapCanObtainData: state.mapCanObtainData));
             }
           } catch (e) {
-            log(e.toString());
             emit(DataPokemonState(
                 isChangeDataOnePokemon: false,
                 mapPokemons: state.mapPokemons,
@@ -141,7 +140,6 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
                 mapCanObtainData: state.mapCanObtainData));
           }
         } else {
-          log("Error");
           emit(DataPokemonState(
               isChangeDataOnePokemon: false,
               mapPokemons: state.mapPokemons,
@@ -163,26 +161,25 @@ class DataPokemonBloc extends Bloc<DataPokemonEvent, DataPokemonState> {
             "${Constants.urlObtainBasicDataAllPokemonGeneration}/${event.generationPokemon.number}/";
         try {
           Response responseDataAllPokemon = await http.get(Uri.parse(uri));
-
           if (responseDataAllPokemon.statusCode == 200) {
             dataAllPokemon = jsonDecode(responseDataAllPokemon.body);
             if (state.mapPokemons[event.generationPokemon]!.length <=
                 dataAllPokemon["pokemon_species"].length) {
               if (state.mapCanObtainData[event.generationPokemon]!) {
-                if (!state.mapPokemons[event.generationPokemon]!.any(
-                    (element) =>
-                        element.name ==
-                        dataAllPokemon["pokemon_species"]["name"])) {
-                  state.mapCanObtainData[event.generationPokemon] = false;
-                  emit(state.copyWitch(
-                      mapPokemons: state.mapPokemons,
-                      listCanObtainData: state.mapCanObtainData));
-                  for (int i =
-                          state.mapPokemons[event.generationPokemon]!.length;
-                      i < dataAllPokemon["pokemon_species"].length;
-                      i++) {
+                state.mapCanObtainData[event.generationPokemon] = false;
+                emit(state.copyWitch(
+                    mapPokemons: state.mapPokemons,
+                    listCanObtainData: state.mapCanObtainData));
+                for (int i = state.mapPokemons[event.generationPokemon]!.length;
+                    i < dataAllPokemon["pokemon_species"].length;
+                    i++) {
+                  if (!state.mapPokemons[event.generationPokemon]!.any(
+                      (element) =>
+                          element.name ==
+                          dataAllPokemon["pokemon_species"][i]["name"])) {
                     responseDataOnePokemon = await http.get(Uri.parse(
                         "${Constants.urlObtainBasicDataAllPokemon}${dataAllPokemon["pokemon_species"][i]["url"].toString().split("/")[dataAllPokemon["pokemon_species"][i]["url"].toString().split("/").length - 2]}"));
+
                     if (responseDataOnePokemon.statusCode == 200) {
                       listTypePokemon = [];
                       listSprite = [];

@@ -25,6 +25,8 @@ class _SplashScreensPageState extends State<SplashScreensPage>
   void initState() {
     context.read<ConnectivityCubit>().listenConnectivity();
     super.initState();
+    Future.delayed(const Duration(seconds: 3),
+        () => setState(() => positionAnimation = 0));
   }
 
   void navigation() {
@@ -33,32 +35,19 @@ class _SplashScreensPageState extends State<SplashScreensPage>
 
   @override
   Widget build(BuildContext context) {
-    bool haveWifi = context.watch<ConnectivityCubit>().state.haveWifi;
     Size size = MediaQuery.sizeOf(context);
-    ListItemCategory currentCategory =
-        context.watch<FilterItemsCubit>().state.listItemCategory;
-    GenerationPokemon generationPokemon =
-        context.watch<FilterPokemonsCubit>().state.generationPokemon;
-    return MultiBlocListener(
-        listeners: [
-          BlocListener<DataPokemonBloc, DataPokemonState>(
-              listener: (context, state) {
-            if (state
-                    .getLisPokemon(generationPokemon: generationPokemon)
-                    .length >
-                35) {
-              setState(() => positionAnimation = 0);
-            }
-          }),
-          BlocListener<ConnectivityCubit, ConnectivityState>(
-              listener: (context, state) {
-            context.read<DataPokemonBloc>().add(DataAllPokemonEvent(
-                haveWifi: state.haveWifi,
-                generationPokemon: generationPokemon));
-            context.read<DataItemBloc>().add(DataItemEvent(
-                haveWifi: state.haveWifi, itemCategory: currentCategory));
-          })
-        ],
+
+    return BlocListener<ConnectivityCubit, ConnectivityState>(
+        listener: (context, state) {
+          context.read<DataPokemonBloc>().add(DataAllPokemonEvent(
+              haveWifi: state.haveWifi,
+              generationPokemon:
+                  context.read<FilterPokemonsCubit>().state.generationPokemon));
+          context.read<DataItemBloc>().add(DataItemEvent(
+              haveWifi: state.haveWifi,
+              itemCategory:
+                  context.read<FilterItemsCubit>().state.listItemCategory));
+        },
         child: Scaffold(
             body: Stack(
           children: [
@@ -83,21 +72,14 @@ class _SplashScreensPageState extends State<SplashScreensPage>
                           Center(
                               child: Image.asset("assets/splash/loading.gif",
                                   width: size.width * .6)),
-                          Text(context
-                              .watch<DataPokemonBloc>()
-                              .state
-                              .mapPokemons[context
-                                  .watch<FilterPokemonsCubit>()
-                                  .state
-                                  .generationPokemon]!
-                              .toList()
-                              .length
-                              .toString()),
                           Padding(
                               padding: EdgeInsets.only(
                                   top: MediaQuery.sizeOf(context).height * 0.1),
                               child: Center(
-                                  child: !haveWifi
+                                  child: !context
+                                          .watch<ConnectivityCubit>()
+                                          .state
+                                          .haveWifi
                                       ? const Text(
                                           "You don't have internet connection")
                                       : AnimatedTextKit(
